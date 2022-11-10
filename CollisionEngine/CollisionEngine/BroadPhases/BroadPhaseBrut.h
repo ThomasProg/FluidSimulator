@@ -18,16 +18,15 @@ public:
 
 	}
 
-	virtual void OnObjectAdded(CPolygonPtr newPolygon) override
+	virtual void OnObjectAdded(const CPolygonPtr& newPolygon) override
 	{
 		for (CPolygonPtr registeredPoly : registeredPolygons)
 		{
 			pairsToCheck.push_back(SPolygonPair(registeredPoly, newPolygon));
 		}
-		registeredPolygons.push_back(newPolygon);
 	}
 
-	virtual void OnObjectRemoved(CPolygonPtr polygon) override
+	virtual void OnObjectRemoved(const CPolygonPtr& polygon) override
 	{
 		pairsToCheck.erase(std::remove_if(pairsToCheck.begin(), pairsToCheck.end(), [polygon](const SPolygonPair& pair)
 			{
@@ -35,11 +34,9 @@ public:
 			}),
 			pairsToCheck.end()
 		);
-
-		registeredPolygons.erase(std::remove(registeredPolygons.begin(), registeredPolygons.end(), polygon), registeredPolygons.end());
 	}
 
-	virtual void OnObjectUpdated(CPolygonPtr polygon) override
+	virtual void OnObjectUpdated(const CPolygonPtr& polygon) override
 	{
 		
 	}
@@ -47,7 +44,6 @@ public:
 	virtual void GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck) override
 	{
 		pairsToCheck = this->pairsToCheck;
-		//AddCollidingPairsToCheck(gVars->pWorld->GetPolygons(), pairsToCheck);
 	}
 
 	static void AddCollidingPairsToCheck(const std::vector<CPolygonPtr>& polygonsToCheck, std::vector<SPolygonPair>& pairsToCheck)
@@ -62,11 +58,6 @@ public:
 			}
 		}
 	}
-
-	//static void GetCollidingPairsToCheck(const std::vector<CPolygonPtr>& polygonsToCheck, std::vector<SPolygonPair>& pairsToCheck)
-	//{
-	//	AddCollidingPairsToCheck(polygonsToCheck, pairsToCheck);
-	//}
 };
 
 #endif

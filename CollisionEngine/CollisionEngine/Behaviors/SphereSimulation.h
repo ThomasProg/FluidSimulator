@@ -29,9 +29,12 @@ struct SConstraint
 class CSphereSimulation : public CBehavior
 {
 private:
-	std::vector<CPolygonPtr> polygons;
+	std::vector<CPolygonPtr>	m_circles;
+	std::vector<CPolygonPtr>	m_chain;
+
 	//CBroadPhaseBrut broadPhase = CBroadPhaseBrut(polygons);
-	CGrid broadPhase = CGrid(RADIUS * 2);
+	//CGrid broadPhase = CGrid(RADIUS * 2);
+	CCircleToCircle broadPhase = CCircleToCircle(m_circles);
 
 	void InitChain(size_t count, const Vec2& start)
 	{
@@ -125,19 +128,16 @@ private:
 		CPolygonPtr circle = gVars->pWorld->AddSymetricPolygon(radius, 50);
 		circle->density = 0.0f;
 		circle->Setposition(pos);
-		m_circles.push_back(circle);
 
 		broadPhase.OnObjectAdded(circle);
 		circle->onTransformUpdatedCallback = ([this, circle](const CPolygon& poly)
 		{
 			broadPhase.OnObjectUpdated(circle);
 		});
+		m_circles.emplace_back(circle);
 
 		return circle;
 	}
-
-	std::vector<CPolygonPtr>	m_circles;
-	std::vector<CPolygonPtr>	m_chain;
 };
 
 #endif

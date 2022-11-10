@@ -111,7 +111,7 @@ public:
         pairsToCheck.clear();
     }
 
-    virtual void OnObjectAdded(CPolygonPtr newPolygon) override
+    virtual void OnObjectAdded(const CPolygonPtr& newPolygon) override
     {
         AABB aabb = newPolygon->transformedAABB;
         AABBInt aabbInt = AABBInt(aabb, gridCellSize);
@@ -125,7 +125,7 @@ public:
         previousAABB.emplace(newPolygon, aabbInt);
     }
 
-    virtual void OnObjectRemoved(CPolygonPtr removedPolygon) override
+    virtual void OnObjectRemoved(const CPolygonPtr& removedPolygon) override
     {
         AABB aabb = removedPolygon->transformedAABB;
         AABBInt aabbInt = AABBInt(aabb, gridCellSize);
@@ -207,7 +207,7 @@ public:
     }
 
     // Can be optimized
-    virtual void OnObjectUpdated(CPolygonPtr polygon) override
+    virtual void OnObjectUpdated(const CPolygonPtr& polygon) override
     {
         const AABB& newAABB = polygon->transformedAABB;
         AABBInt newAABBInt = AABBInt(newAABB, gridCellSize);

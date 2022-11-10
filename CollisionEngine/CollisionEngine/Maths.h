@@ -238,7 +238,7 @@ struct Circle
 	Circle(Vec2 _point, float _radius) : point(_point), radius(_radius) {}
 	Circle(Vec2 _point, const std::vector<Vec2>& _polygonPoints);
 
-	bool CheckCollision(const Circle& circle) const
+	bool IsColliding(const Circle& circle) const
 	{
 		float radiusSum = radius + circle.radius;
 		return (point - circle.point).GetSqrLength() < radiusSum * radiusSum;

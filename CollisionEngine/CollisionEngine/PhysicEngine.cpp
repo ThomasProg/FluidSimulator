@@ -21,8 +21,10 @@ void	CPhysicEngine::Reset()
 	m_collidingPairs.clear();
 
 	m_active = true;
-
-	m_broadPhase = new CCircleToCircle();
+	 
+	m_broadPhase = new CGrid(5);
+	//m_broadPhase = new CCircleToCircle(m_polygons);
+	//m_broadPhase = new CBroadPhaseBrut(m_polygons);
 }
 
 void	CPhysicEngine::Activate(bool active)
@@ -84,10 +86,16 @@ void	CPhysicEngine::CollisionNarrowPhase()
 
 void CPhysicEngine::AddPolygon(CPolygonPtr polygon)
 {
+	m_broadPhase->OnObjectAdded(polygon);
+	polygon->onTransformUpdatedCallback = ([this, polygon](const CPolygon& poly)
+	{
+		m_broadPhase->OnObjectUpdated(polygon);
+	});
 	m_polygons.push_back(polygon);
 }
 
 void CPhysicEngine::RemovePolygon(CPolygonPtr polygon)
 {
 	m_polygons.erase(std::remove(m_polygons.begin(), m_polygons.end(), polygon), m_polygons.end());
+	m_broadPhase->OnObjectRemoved(polygon);
 }
