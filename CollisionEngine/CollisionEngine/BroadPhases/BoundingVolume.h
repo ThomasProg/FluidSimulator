@@ -8,6 +8,7 @@
 #include "GlobalVariables.h"
 #include "World.h"
 #include <unordered_map>
+#include "Renderer.h"
 
 template<class SHAPE, typename CONVERTOR>
 class CBoundingVolume : public IBroadPhase
@@ -34,6 +35,7 @@ public:
 	virtual void OnObjectRemoved(const CPolygonPtr& polygon)
 	{
 		boundingVolumes.erase(polygon);
+		polygon->onTransformUpdatedCallback = nullptr;
 	}
 
 	virtual void GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck) override

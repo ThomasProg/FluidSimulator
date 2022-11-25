@@ -52,6 +52,16 @@ private:
 
 			poly->Setposition(polyPos);
 		});
+
+		if (gVars->pRenderWindow->JustPressedKey(Key::F6))
+		{
+			gVars->pPhysicEngine->PreviousBroadPhase();
+		}
+
+		if (gVars->pRenderWindow->JustPressedKey(Key::F7))
+		{
+			gVars->pPhysicEngine->NextBroadPhase();
+		}
 	}
 };
 

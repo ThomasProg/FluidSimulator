@@ -8,6 +8,7 @@
 #include "World.h"
 #include <math.h>
 #include <unordered_set>
+#include "Renderer.h"
 
 namespace std {
 
@@ -303,10 +304,7 @@ public:
         // check for same poly
         for (const std::pair<SPolygonPair, int>& it : pairsToCheck)
         {
-            if (it.first.GetpolyA() == it.first.GetpolyB())
-            {
-                std::cout << "ERROR" << std::endl;
-            }
+            assert(it.first.GetpolyA() != it.first.GetpolyB());
         }
 
         while (FixDuplicates());

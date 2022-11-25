@@ -15,44 +15,20 @@
 #include "BroadPhases/SweepAndPrune.h"
 #include "BroadPhases/QuadTree.h"
 
-
 void	CPhysicEngine::Reset()
 {
 	m_pairsToCheck.clear();
 	m_collidingPairs.clear();
+	m_polygons.clear();
 
 	m_active = true;
 
-	broadPhasesGetters.clear();
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CBroadPhaseBrut>(m_polygons); });
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CGrid>(4); });
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CCircleToCircle>(m_polygons); });
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CAABBToAABB>(m_polygons); });
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CSweepAndPrune>(); });
-	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CQuadTree>(); });;
-
-	//m_broadPhase = std::make_unique<CAABBTree>();
-	m_broadPhase = broadPhasesGetters[0]();//std::make_unique<CGrid>(4);
-	//m_broadPhase = std::make_unique<CCircleToCircle>(m_polygons);
-	//m_broadPhase = std::make_unique<CBroadPhaseBrut>(m_polygons);
-	//m_broadPhase = std::make_unique<CAABBToAABB>(m_polygons);
-	//m_broadPhase = std::make_unique<CSweepAndPrune>();
-	//m_broadPhase = std::make_unique<CQuadTree>();
+	m_broadPhase.Reset();
 }
 
 void CPhysicEngine::SetBroadPhase(std::unique_ptr<IBroadPhase>&& broadPhase)
 {
-	for (CPolygonPtr& poly : m_polygons)
-	{
-		m_broadPhase->OnObjectRemoved(poly);
-	}
-
-	m_broadPhase = std::move(broadPhase);
-
-	for (CPolygonPtr& poly : m_polygons)
-	{
-		m_broadPhase->OnObjectAdded(poly);
-	}
+	m_broadPhase.SetBroadPhase(std::move(broadPhase));
 }
 
 void	CPhysicEngine::Activate(bool active)
@@ -68,6 +44,7 @@ void	CPhysicEngine::DetectCollisions()
 	timer.Stop();
 	if (gVars->bDebug)
 	{
+		gVars->pRenderer->DisplayText("NbPolygons : " + std::to_string(m_polygons.size()));
 		gVars->pRenderer->DisplayText("Collision broadphase duration " + std::to_string(timer.GetDuration() * 1000.0f) + " ms");
 	}
 
@@ -115,10 +92,6 @@ void	CPhysicEngine::CollisionNarrowPhase()
 void CPhysicEngine::AddPolygon(CPolygonPtr polygon)
 {
 	m_broadPhase->OnObjectAdded(polygon);
-	//polygon->onTransformUpdatedCallback = ([this, polygon](const CPolygon& poly)
-	//{
-	//	m_broadPhase->OnObjectUpdated(polygon);
-	//});
 	m_polygons.push_back(polygon);
 }
 

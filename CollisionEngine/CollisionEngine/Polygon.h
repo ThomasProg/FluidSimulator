@@ -68,4 +68,35 @@ private:
 
 typedef std::shared_ptr<CPolygon>	CPolygonPtr;
 
+
+class SPolygonPair
+{
+private:
+	// polyA < polyB
+	CPolygonPtr	polyA;
+	CPolygonPtr	polyB;
+
+public:
+	GETTER(polyA)
+	GETTER(polyB)
+
+	SPolygonPair(const CPolygonPtr& _polyA, const CPolygonPtr& _polyB) : polyA(_polyA), polyB(_polyB)
+	{
+		if (_polyA == _polyB)
+		{
+			throw std::exception("SPolygonPair : polyA and polyB can't be the same.");
+		}
+
+		if (_polyA > _polyB)
+		{
+			swap(polyA, polyB);
+		}
+	}
+
+	bool operator==(const SPolygonPair& rhs) const
+	{
+		return (polyA == rhs.polyA) && (polyB == rhs.polyB); // polyA < polyB => opti
+	}
+};
+
 #endif

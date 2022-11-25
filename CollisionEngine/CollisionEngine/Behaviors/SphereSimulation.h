@@ -33,13 +33,7 @@ private:
 	std::vector<CPolygonPtr>	m_circles;
 	std::vector<CPolygonPtr>	m_chain;
 
-	//CBroadPhaseBrut broadPhase = CBroadPhaseBrut(polygons);
-	//CGrid broadPhase = CGrid(RADIUS * 2);
-	//CCircleToCircle broadPhase = CCircleToCircle(m_circles);
-	//CAABBToAABB broadPhase = CAABBToAABB(m_circles);
-	//CAABBTree broadPhase = CAABBTree();
-	CSweepAndPrune broadPhase = CSweepAndPrune(); 
-	//CQuadTree broadPhase = CQuadTree();
+	BroadPhaseSwitcher broadPhase = BroadPhaseSwitcher(m_circles);
 
 	void InitChain(size_t count, const Vec2& start)
 	{
@@ -56,6 +50,8 @@ private:
 
 	virtual void Start() override
 	{
+		broadPhase.Reset();
+
 		for (float x = -12.0f; x < 12.0f; x += 5.0f)
 		{
 			for (float y = -22.0f; y < 22.0f; y += 10.0f)
@@ -71,6 +67,16 @@ private:
 
 	virtual void Update(float frameTime) override
 	{
+		if (gVars->pRenderWindow->JustPressedKey(Key::F6))
+		{
+			broadPhase.PreviousBroadPhase();
+		}
+
+		if (gVars->pRenderWindow->JustPressedKey(Key::F7))
+		{
+			broadPhase.NextBroadPhase();
+		}
+
 		for (CPolygonPtr& circle : m_circles)
 		{
 			circle->speed.y -= 20.0f * frameTime; // apply gravity 
@@ -78,18 +84,8 @@ private:
 		}
 
 		std::vector<SPolygonPair> pairsToCheck;
-		broadPhase.GetCollidingPairsToCheck(pairsToCheck);
+		broadPhase->GetCollidingPairsToCheck(pairsToCheck);
 		gVars->pRenderer->DisplayText("Amount of pairs to check : " + std::to_string(pairsToCheck.size()));
-
-		if (gVars->pRenderWindow->JustPressedKey(Key::F6))
-		{
-			gVars->pPhysicEngine->PreviousBroadPhase();
-		}
-
-		if (gVars->pRenderWindow->JustPressedKey(Key::F7))
-		{
-			gVars->pPhysicEngine->NextBroadPhase();
-		}
 
 		for (SPolygonPair pair : pairsToCheck)
 		{
@@ -144,11 +140,7 @@ private:
 		circle->density = 0.0f;
 		circle->Setposition(pos);
 
-		broadPhase.OnObjectAdded(circle);
-		//circle->onTransformUpdatedCallback = ([this, circle](const CPolygon& poly)
-		//{
-		//	broadPhase.OnObjectUpdated(circle);
-		//});
+		broadPhase->OnObjectAdded(circle);
 		m_circles.emplace_back(circle);
 
 		return circle;

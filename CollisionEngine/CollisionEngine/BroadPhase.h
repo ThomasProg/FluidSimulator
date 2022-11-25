@@ -1,7 +1,7 @@
 #ifndef _BROAD_PHASE_H_
 #define _BROAD_PHASE_H_
 
-#include "PhysicEngine.h"
+#include "Polygon.h"
 
 class IBroadPhase
 {

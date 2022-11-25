@@ -6,6 +6,7 @@
 #include "Polygon.h"
 #include "GlobalVariables.h"
 #include "World.h"
+#include "Renderer.h"
 
 class CBroadPhaseBrut : public IBroadPhase
 {
@@ -20,7 +21,7 @@ public:
 
 	virtual void OnObjectAdded(const CPolygonPtr& newPolygon) override
 	{
-		for (CPolygonPtr registeredPoly : registeredPolygons)
+		for (const CPolygonPtr& registeredPoly : registeredPolygons)
 		{
 			pairsToCheck.push_back(SPolygonPair(registeredPoly, newPolygon));
 		}

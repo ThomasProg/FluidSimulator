@@ -349,5 +349,4 @@ public:
 	}
 };
 
-
 #endif

@@ -207,6 +207,7 @@ public:
 	virtual void OnObjectRemoved(const CPolygonPtr& polygon) override
 	{
 		//RemoveObjectFromTree(polygon);
+		polygon->onTransformUpdatedCallback = nullptr;
 	}
 
 	void AddCollidingPairsChildren(const QuadTreeNode& node, const QuadTreeNode& subNode, std::vector<SPolygonPair>& pairsToCheck)
@@ -258,13 +259,14 @@ public:
 		AddCollidingPairs(treeRoot, pairsToCheck);
 
 		if (gVars->bDebug)
+		{
+			gVars->pRenderer->DisplayText("QuadTree");
 			DisplayDebugForNode(treeRoot, 1);
+		}
 	}
 
 	void DisplayDebugForNode(const QuadTreeNode& treeNode, float r)
 	{
-		gVars->pRenderer->DisplayText("QuadTree");
-
 		for (const auto& subDiv : treeNode.Getsubdivisions())
 		{
 			gVars->pRenderer->DrawAABB(subDiv.aabb, r, 0, 0);

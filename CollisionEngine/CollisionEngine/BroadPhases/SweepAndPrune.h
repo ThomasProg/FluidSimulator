@@ -79,9 +79,9 @@ public:
 
 	virtual void OnObjectRemoved(const CPolygonPtr& polygon) 
 	{
-		std::remove_if(polygons.begin(), polygons.end(), [&polygon](const std::unique_ptr<PolygonData>& polyData)
+		std::remove_if(polygons.begin(), polygons.end(), [polygon](const std::unique_ptr<PolygonData>& polyData)
 		{
-			return polygon == polyData->Getpolygon();
+			return polyData == nullptr || polygon == polyData->Getpolygon();
 		});
 		polygon->onTransformUpdatedCallback = nullptr;
 	}

@@ -98,6 +98,7 @@
     <ClInclude Include="Behaviors\SimplePolygonBounce.h" />
     <ClInclude Include="Behaviors\SphereSimulation.h" />
     <ClInclude Include="BroadPhaseBrut.h" />
+    <ClInclude Include="BroadPhaseSwitcher.h" />
     <ClInclude Include="BroadPhases\AABBTree.h" />
     <ClInclude Include="BroadPhases\BroadPhaseBrut.h" />
     <ClInclude Include="BroadPhases\BoundingVolume.h" />
@@ -123,7 +124,7 @@
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BroadPhases\QuadTree.cpp" />
+    <ClCompile Include="BroadPhaseSwitcher.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GlobaleVariables.cpp" />
     <ClCompile Include="Maths.cpp" />

@@ -5,38 +5,8 @@
 #include <unordered_map>
 #include "Maths.h"
 #include "Polygon.h"
-
-class IBroadPhase;
-
-class SPolygonPair
-{
-private:
-	// polyA < polyB
-	CPolygonPtr	polyA; 
-	CPolygonPtr	polyB;
-
-public:
-	GETTER(polyA)
-	GETTER(polyB)
-
-	SPolygonPair(const CPolygonPtr& _polyA, const CPolygonPtr& _polyB) : polyA(_polyA), polyB(_polyB)
-	{
-		if (_polyA == _polyB)
-		{
-			throw std::exception("SPolygonPair : polyA and polyB can't be the same.");
-		}
-
-		if (_polyA > _polyB)
-		{
-			swap(polyA, polyB);
-		}
-	}
-	
-	bool operator==(const SPolygonPair& rhs) const
-	{
-		return (polyA == rhs.polyA) && (polyB == rhs.polyB); // polyA < polyB => opti
-	}
-};
+#include "BroadPhase.h"
+#include "BroadPhaseSwitcher.h"
 
 struct SCollision
 {
@@ -62,13 +32,10 @@ private:
 	bool						m_active = true;
 
 	// Collision detection
-	std::unique_ptr<IBroadPhase> m_broadPhase;
 	std::vector<SPolygonPair>	m_pairsToCheck;
 	std::vector<SCollision>		m_collidingPairs;
 	std::vector<CPolygonPtr>    m_polygons;
-
-	std::vector<std::function<std::unique_ptr<IBroadPhase>()>> broadPhasesGetters;
-	int broadPhaseID = 0;
+	BroadPhaseSwitcher			m_broadPhase = BroadPhaseSwitcher(m_polygons);
 
 public:
 	void	Reset();
@@ -92,11 +59,11 @@ public:
 	void SetBroadPhase(std::unique_ptr<IBroadPhase>&& broadPhase);
 	void NextBroadPhase()
 	{
-		broadPhaseID = (broadPhaseID + 1 + broadPhasesGetters.size()) % broadPhasesGetters.size();
+		m_broadPhase.NextBroadPhase();
 	}
 	void PreviousBroadPhase()
 	{
-		broadPhaseID = (broadPhaseID - 1 + broadPhasesGetters.size()) % broadPhasesGetters.size();
+		m_broadPhase.PreviousBroadPhase();
 	}
 };
 

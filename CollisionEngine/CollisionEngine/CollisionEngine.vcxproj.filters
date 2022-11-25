@@ -117,6 +117,9 @@
     <ClInclude Include="BroadPhases\QuadTree.h">
       <Filter>Fichiers sources\BroadPhases</Filter>
     </ClInclude>
+    <ClInclude Include="BroadPhaseSwitcher.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -152,8 +155,8 @@
     <ClCompile Include="Maths.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="BroadPhases\QuadTree.cpp">
-      <Filter>Fichiers sources\BroadPhases</Filter>
+    <ClCompile Include="BroadPhaseSwitcher.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
