@@ -23,7 +23,7 @@ int _tmain(int argc, char** argv)
     InitApplication(1260, 768, 50.0f);
 
     gVars->pSceneManager->AddScene(new CSceneDebugCollisions());
-    gVars->pSceneManager->AddScene(new CSceneBouncingPolys(4));
+    gVars->pSceneManager->AddScene(new CSceneBouncingPolys(200));
     gVars->pSceneManager->AddScene(new CSceneSpheres());
 
 
