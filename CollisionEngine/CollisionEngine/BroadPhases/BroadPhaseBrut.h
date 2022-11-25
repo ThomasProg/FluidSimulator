@@ -36,19 +36,15 @@ public:
 		);
 	}
 
-	virtual void OnObjectUpdated(const CPolygonPtr& polygon) override
-	{
-		
-	}
-
 	virtual void GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck) override
 	{
+		gVars->pRenderer->DisplayText("Brut");
 		pairsToCheck = this->pairsToCheck;
 	}
 
 	static void AddCollidingPairsToCheck(const std::vector<CPolygonPtr>& polygonsToCheck, std::vector<SPolygonPair>& pairsToCheck)
 	{
-		pairsToCheck.reserve(polygonsToCheck.size() * polygonsToCheck.size()); // n * log(n)
+		pairsToCheck.reserve(polygonsToCheck.size() * polygonsToCheck.size()); // ideal sizee : n * log(n), but log long to compute
 		size_t size = polygonsToCheck.size();
 		for (size_t i = 0; i < size; ++i)
 		{

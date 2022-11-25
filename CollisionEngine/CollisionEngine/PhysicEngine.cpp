@@ -9,10 +9,11 @@
 
 #include "BroadPhase.h"
 #include "BroadPhases/BroadPhaseBrut.h"
-#include "BroadPhases/CircleToCircle.h"
+#include "BroadPhases/BoundingVolume.h"
 #include "BroadPhases/AABBTree.h"
 #include "BroadPhases/Grid.h"
 #include "BroadPhases/SweepAndPrune.h"
+#include "BroadPhases/QuadTree.h"
 
 
 void	CPhysicEngine::Reset()
@@ -21,10 +22,37 @@ void	CPhysicEngine::Reset()
 	m_collidingPairs.clear();
 
 	m_active = true;
-	 
-	m_broadPhase = new CGrid(5);
-	//m_broadPhase = new CCircleToCircle(m_polygons);
-	//m_broadPhase = new CBroadPhaseBrut(m_polygons);
+
+	broadPhasesGetters.clear();
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CBroadPhaseBrut>(m_polygons); });
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CGrid>(4); });
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CCircleToCircle>(m_polygons); });
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CAABBToAABB>(m_polygons); });
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CSweepAndPrune>(); });
+	broadPhasesGetters.emplace_back([this]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CQuadTree>(); });;
+
+	//m_broadPhase = std::make_unique<CAABBTree>();
+	m_broadPhase = broadPhasesGetters[0]();//std::make_unique<CGrid>(4);
+	//m_broadPhase = std::make_unique<CCircleToCircle>(m_polygons);
+	//m_broadPhase = std::make_unique<CBroadPhaseBrut>(m_polygons);
+	//m_broadPhase = std::make_unique<CAABBToAABB>(m_polygons);
+	//m_broadPhase = std::make_unique<CSweepAndPrune>();
+	//m_broadPhase = std::make_unique<CQuadTree>();
+}
+
+void CPhysicEngine::SetBroadPhase(std::unique_ptr<IBroadPhase>&& broadPhase)
+{
+	for (CPolygonPtr& poly : m_polygons)
+	{
+		m_broadPhase->OnObjectRemoved(poly);
+	}
+
+	m_broadPhase = std::move(broadPhase);
+
+	for (CPolygonPtr& poly : m_polygons)
+	{
+		m_broadPhase->OnObjectAdded(poly);
+	}
 }
 
 void	CPhysicEngine::Activate(bool active)
@@ -87,10 +115,10 @@ void	CPhysicEngine::CollisionNarrowPhase()
 void CPhysicEngine::AddPolygon(CPolygonPtr polygon)
 {
 	m_broadPhase->OnObjectAdded(polygon);
-	polygon->onTransformUpdatedCallback = ([this, polygon](const CPolygon& poly)
-	{
-		m_broadPhase->OnObjectUpdated(polygon);
-	});
+	//polygon->onTransformUpdatedCallback = ([this, polygon](const CPolygon& poly)
+	//{
+	//	m_broadPhase->OnObjectUpdated(polygon);
+	//});
 	m_polygons.push_back(polygon);
 }
 

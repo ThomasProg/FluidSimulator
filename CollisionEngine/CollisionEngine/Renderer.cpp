@@ -65,6 +65,32 @@ void CRenderer::DrawLine(const Vec2& from, const Vec2& to, float r, float g, flo
 	glEnd();
 }
 
+void CRenderer::DrawAABB(const AABB& aabb, float r, float g, float b)
+{
+	glColor3f(r, g, b);
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(aabb.pMin.x, aabb.pMin.y, -1.0f);
+	glVertex3f(aabb.pMin.x, aabb.pMax.y, -1.0f);
+	glVertex3f(aabb.pMax.x, aabb.pMax.y, -1.0f);
+	glVertex3f(aabb.pMax.x, aabb.pMin.y, -1.0f);
+	glEnd();
+}
+
+void CRenderer::DrawCircle(const Vec2& pos, float radius, int nbSides, float r, float g, float b)
+{
+	glColor3f(r, g, b);
+	glBegin(GL_LINE_LOOP);
+	float dAngle = 360.0f / (float)nbSides;
+	for (size_t i = 0; i < nbSides; ++i)
+	{
+		float angle = i * dAngle;
+
+		Vec2 point = pos + Vec2(cosf(DEG2RAD(angle)), sinf(DEG2RAD(angle))) * radius;
+		glVertex3f(point.x, point.y, -1.0f);
+	}
+	glEnd();
+}
+
 Vec2 CRenderer::ScreenToWorldPos(const Vec2& pos) const
 {
 	float width = (float)gVars->pRenderWindow->GetWidth();

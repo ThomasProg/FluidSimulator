@@ -9,10 +9,11 @@
 
 #include "BroadPhase.h"
 #include "BroadPhases/BroadPhaseBrut.h"
-#include "BroadPhases/CircleToCircle.h"
+#include "BroadPhases/BoundingVolume.h"
 #include "BroadPhases/AABBTree.h"
 #include "BroadPhases/Grid.h"
 #include "BroadPhases/SweepAndPrune.h"
+#include "BroadPhases/QuadTree.h"
 
 #define RADIUS 2.0f
 #define DISTANCE 5.0f
@@ -34,7 +35,11 @@ private:
 
 	//CBroadPhaseBrut broadPhase = CBroadPhaseBrut(polygons);
 	//CGrid broadPhase = CGrid(RADIUS * 2);
-	CCircleToCircle broadPhase = CCircleToCircle(m_circles);
+	//CCircleToCircle broadPhase = CCircleToCircle(m_circles);
+	//CAABBToAABB broadPhase = CAABBToAABB(m_circles);
+	//CAABBTree broadPhase = CAABBTree();
+	CSweepAndPrune broadPhase = CSweepAndPrune(); 
+	//CQuadTree broadPhase = CQuadTree();
 
 	void InitChain(size_t count, const Vec2& start)
 	{
@@ -75,6 +80,16 @@ private:
 		std::vector<SPolygonPair> pairsToCheck;
 		broadPhase.GetCollidingPairsToCheck(pairsToCheck);
 		gVars->pRenderer->DisplayText("Amount of pairs to check : " + std::to_string(pairsToCheck.size()));
+
+		if (gVars->pRenderWindow->JustPressedKey(Key::F6))
+		{
+			gVars->pPhysicEngine->PreviousBroadPhase();
+		}
+
+		if (gVars->pRenderWindow->JustPressedKey(Key::F7))
+		{
+			gVars->pPhysicEngine->NextBroadPhase();
+		}
 
 		for (SPolygonPair pair : pairsToCheck)
 		{
@@ -130,10 +145,10 @@ private:
 		circle->Setposition(pos);
 
 		broadPhase.OnObjectAdded(circle);
-		circle->onTransformUpdatedCallback = ([this, circle](const CPolygon& poly)
-		{
-			broadPhase.OnObjectUpdated(circle);
-		});
+		//circle->onTransformUpdatedCallback = ([this, circle](const CPolygon& poly)
+		//{
+		//	broadPhase.OnObjectUpdated(circle);
+		//});
 		m_circles.emplace_back(circle);
 
 		return circle;

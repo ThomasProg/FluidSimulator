@@ -102,13 +102,19 @@
     <ClInclude Include="BroadPhases\BroadPhaseBrut.h">
       <Filter>Fichiers sources\BroadPhases</Filter>
     </ClInclude>
-    <ClInclude Include="BroadPhases\CircleToCircle.h">
+    <ClInclude Include="BroadPhases\BoundingVolume.h">
       <Filter>Fichiers sources\BroadPhases</Filter>
     </ClInclude>
     <ClInclude Include="BroadPhases\Grid.h">
       <Filter>Fichiers sources\BroadPhases</Filter>
     </ClInclude>
     <ClInclude Include="BroadPhases\SweepAndPrune.h">
+      <Filter>Fichiers sources\BroadPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="Conversion.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadPhases\QuadTree.h">
       <Filter>Fichiers sources\BroadPhases</Filter>
     </ClInclude>
   </ItemGroup>
@@ -145,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="Maths.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BroadPhases\QuadTree.cpp">
+      <Filter>Fichiers sources\BroadPhases</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

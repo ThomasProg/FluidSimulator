@@ -21,7 +21,6 @@ void CPolygon::Build()
 	CreateBuffers();
 	BuildLines();
 
-	centeredAABB = ConstructCenteredAABB();
 	OnTransformUpdated();
 }
 
@@ -74,28 +73,8 @@ Circle CPolygon::GetCircle() const
 	return circle;
 }
 
-AABB CPolygon::ConstructCenteredAABB() const
-{
-	if (points.size() == 0)
-		return AABB();
-
-	AABB aabb (points[0], points[0]);
-
-	for (const Vec2& p : points)
-	{
-		// TODO : remove first iteration?
-		aabb.pMin.x = Min(aabb.pMin.x, p.x);
-		aabb.pMin.y = Min(aabb.pMin.y, p.y);
-		aabb.pMax.x = Max(aabb.pMax.x, p.x);
-		aabb.pMax.y = Max(aabb.pMax.y, p.y);
-	}
-
-	return aabb;
-}
-
 void CPolygon::OnTransformUpdated()
 {
-	transformedAABB = AABB(centeredAABB.pMin + position, centeredAABB.pMax + position);
 	if (onTransformUpdatedCallback) 
 	{
 		onTransformUpdatedCallback(*this); 

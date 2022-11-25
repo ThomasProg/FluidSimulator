@@ -64,6 +64,11 @@ struct Vec2
 		return Vec2(x - rhs.x, y - rhs.y);
 	}
 
+	Vec2 operator-() const
+	{
+		return Vec2(-x, -y);
+	}
+
 	Vec2& operator-=(const Vec2& rhs)
 	{
 		x -= rhs.x;
@@ -281,10 +286,68 @@ struct AABB
 		return aabb;
 	}
 
+	void EnlargeWithPoint(const Vec2& p)
+	{
+		pMin.x = Min(pMin.x, p.x);
+		pMin.y = Min(pMin.y, p.y);
+		pMax.x = Max(pMax.x, p.x);
+		pMax.y = Max(pMax.y, p.y);
+	}
+
 	bool CheckCollision(const AABB& aabb) const
 	{
-		return true;
+		return pMax.x > aabb.pMin.x && pMin.x < aabb.pMax.x 
+			&& pMax.y > aabb.pMin.y && pMin.y < aabb.pMax.y;
+	}
+
+	void Translate(const Vec2& translation)
+	{
+		pMin += translation;
+		pMax += translation;
+	}
+
+	AABB Merge(const AABB& aabb) const
+	{
+		return AABB(Vec2(Min(aabb.pMin.x, pMin.x), Min(aabb.pMin.y, pMin.y)), Vec2(Max(aabb.pMax.x, pMax.x), Max(aabb.pMax.y, pMax.y)));
+	}
+
+	float GetArea() const
+	{
+		return (pMax.x - pMin.x) * (pMax.y - pMin.y);
 	}
 };
+using AABB2 = AABB;
+
+struct MoveableAABB
+{
+private:
+	AABB baseAABB;
+	AABB movedAABB;
+
+	void OnBaseChanged()
+	{
+		movedAABB = baseAABB;
+	}
+
+public:
+	SETTER(baseAABB, OnBaseChanged)
+	GETTER(movedAABB)
+	GETTER(baseAABB)
+
+	void SetTransform(const Vec2& newPos)
+	{
+		movedAABB = baseAABB;
+		movedAABB.Translate(newPos);
+	}
+
+	void SetTransform(const Vec2& newPos, const Mat2& rotation)
+	{
+		movedAABB = AABB::Make(rotation * baseAABB.pMin, rotation * baseAABB.pMax);
+		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMin.x, baseAABB.pMax.y)));
+		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMax.x, baseAABB.pMin.y)));
+		movedAABB.Translate(newPos);
+	}
+};
+
 
 #endif

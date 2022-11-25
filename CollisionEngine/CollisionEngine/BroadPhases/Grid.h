@@ -78,6 +78,7 @@ struct AABBInt
 };
 
 #include <Polygon.h>
+#include "Conversion.h"
 
 class CGrid : public IBroadPhase
 {
@@ -89,7 +90,12 @@ public:
     using TCell = TGrid::iterator;
     TGrid grid;
 
-    std::unordered_map<CPolygonPtr, AABBInt> previousAABB;
+    struct PolygonAdditionalGeometryData
+    {
+        AABB baseAABB;
+        AABBInt lastAABBInt;
+    };
+    std::unordered_map<CPolygonPtr, PolygonAdditionalGeometryData> polygonsAdditionalGeometryData;
 
     CGrid(float gridCellSize) : gridCellSize(gridCellSize)
     {
@@ -98,6 +104,9 @@ public:
 
     virtual void GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck) override
     {
+        if (gVars->bDebug)
+            DisplayDebug();
+
         pairsToCheck.reserve(pairsToCheck.size());
         for (auto it : this->pairsToCheck)
         {
@@ -113,8 +122,9 @@ public:
 
     virtual void OnObjectAdded(const CPolygonPtr& newPolygon) override
     {
-        AABB aabb = newPolygon->transformedAABB;
-        AABBInt aabbInt = AABBInt(aabb, gridCellSize);
+        AABB baseAABB = PolyToBaseAABB(newPolygon);
+        AABB transformedAABB = PolyToTransformedAABB(newPolygon, baseAABB);
+        AABBInt aabbInt = AABBInt(transformedAABB, gridCellSize);
         for (int gridX = aabbInt.pMin.x; gridX <= aabbInt.pMax.x; gridX++)
         {
             for (int gridY = aabbInt.pMin.y; gridY <= aabbInt.pMax.y; gridY++)
@@ -122,13 +132,22 @@ public:
                 AddElementToCell(newPolygon, Vec2Int{ gridX, gridY });
             }
         }
-        previousAABB.emplace(newPolygon, aabbInt);
+
+        PolygonAdditionalGeometryData geometryData{ baseAABB, aabbInt };
+
+        polygonsAdditionalGeometryData.emplace(newPolygon, geometryData);
+
+        newPolygon->onTransformUpdatedCallback = ([this, newPolygon](const CPolygon& poly)
+        {
+	        OnObjectUpdated(newPolygon);
+        });
     }
 
     virtual void OnObjectRemoved(const CPolygonPtr& removedPolygon) override
     {
-        AABB aabb = removedPolygon->transformedAABB;
-        AABBInt aabbInt = AABBInt(aabb, gridCellSize);
+        removedPolygon->onTransformUpdatedCallback = nullptr;
+        auto geometryDataIt = polygonsAdditionalGeometryData.find(removedPolygon);
+        const AABBInt& aabbInt = geometryDataIt->second.lastAABBInt;
         for (int gridX = aabbInt.pMin.x; gridX <= aabbInt.pMax.x; gridX++)
         {
             for (int gridY = aabbInt.pMin.y; gridY <= aabbInt.pMax.y; gridY++)
@@ -137,7 +156,7 @@ public:
             }
         }
 
-        previousAABB.erase(removedPolygon);
+        polygonsAdditionalGeometryData.erase(geometryDataIt);
     }
 
     std::pair<TCell, bool> GetOrInsertCell(const Vec2Int& gridLocation)
@@ -207,13 +226,14 @@ public:
     }
 
     // Can be optimized
-    virtual void OnObjectUpdated(const CPolygonPtr& polygon) override
+    void OnObjectUpdated(const CPolygonPtr& polygon) 
     {
-        const AABB& newAABB = polygon->transformedAABB;
-        AABBInt newAABBInt = AABBInt(newAABB, gridCellSize);
+        auto geometryDataIt = polygonsAdditionalGeometryData.find(polygon);
 
-        auto previousAABBIt = previousAABB.find(polygon);
-        const AABBInt& oldAABBInt = previousAABBIt->second;
+        AABB transformedAABB = PolyToTransformedAABB(polygon, geometryDataIt->second.baseAABB);
+        AABBInt newAABBInt = AABBInt(transformedAABB, gridCellSize);
+
+        const AABBInt& oldAABBInt = geometryDataIt->second.lastAABBInt;
 
         // TODO : better opti
 
@@ -258,7 +278,7 @@ public:
             AddElementToCell(polygon, cell);
         }
 
-        previousAABBIt->second = newAABBInt;
+        geometryDataIt->second.lastAABBInt = newAABBInt;
     }
 
     void UpdatePairsToCheck()
@@ -312,6 +332,24 @@ public:
             }
         }
         return false;
+    }
+
+    void DisplayDebug()
+    {
+        gVars->pRenderer->DisplayText("Grid");
+
+        for (auto& pair : grid)
+        {
+            pair.first;
+            float left = pair.first.x * gridCellSize;
+            float right = pair.first.x * gridCellSize + gridCellSize;
+            float bottom = pair.first.y * gridCellSize;
+            float up = pair.first.y * gridCellSize + gridCellSize;
+            gVars->pRenderer->DrawLine(Vec2(left, up), Vec2(right, up), 1,0,0);
+            gVars->pRenderer->DrawLine(Vec2(left, bottom), Vec2(right, bottom), 1, 0, 0);
+            gVars->pRenderer->DrawLine(Vec2(left, up), Vec2(left, bottom), 1, 0, 0);
+            gVars->pRenderer->DrawLine(Vec2(right, up), Vec2(right, bottom), 1, 0, 0);
+        }
     }
 #pragma endregion
 };

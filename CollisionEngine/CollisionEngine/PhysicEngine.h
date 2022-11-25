@@ -62,10 +62,13 @@ private:
 	bool						m_active = true;
 
 	// Collision detection
-	IBroadPhase* m_broadPhase;
+	std::unique_ptr<IBroadPhase> m_broadPhase;
 	std::vector<SPolygonPair>	m_pairsToCheck;
 	std::vector<SCollision>		m_collidingPairs;
 	std::vector<CPolygonPtr>    m_polygons;
+
+	std::vector<std::function<std::unique_ptr<IBroadPhase>()>> broadPhasesGetters;
+	int broadPhaseID = 0;
 
 public:
 	void	Reset();
@@ -86,6 +89,15 @@ public:
 
 	void AddPolygon(CPolygonPtr polygon);
 	void RemovePolygon(CPolygonPtr polygon);
+	void SetBroadPhase(std::unique_ptr<IBroadPhase>&& broadPhase);
+	void NextBroadPhase()
+	{
+		broadPhaseID = (broadPhaseID + 1 + broadPhasesGetters.size()) % broadPhasesGetters.size();
+	}
+	void PreviousBroadPhase()
+	{
+		broadPhaseID = (broadPhaseID - 1 + broadPhasesGetters.size()) % broadPhasesGetters.size();
+	}
 };
 
 #endif

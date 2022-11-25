@@ -17,6 +17,8 @@ CSDLRenderWindow::CSDLRenderWindow(int width, int height)
 	m_sdlKeyMap[SDL_SCANCODE_F3] = Key::F3;
 	m_sdlKeyMap[SDL_SCANCODE_F4] = Key::F4;
 	m_sdlKeyMap[SDL_SCANCODE_F5] = Key::F5;
+	m_sdlKeyMap[SDL_SCANCODE_F6] = Key::F6;
+	m_sdlKeyMap[SDL_SCANCODE_F7] = Key::F7;
 }
 
 void CSDLRenderWindow::Init()

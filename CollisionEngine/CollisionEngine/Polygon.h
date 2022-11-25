@@ -32,8 +32,6 @@ public:
 	SETTER(rotation, OnTransformUpdated)
 
 	std::vector<Vec2>	points;
-	AABB				centeredAABB;
-	AABB				transformedAABB;
 
 	void				Build();
 	void				Draw();
@@ -41,7 +39,6 @@ public:
 
 	float				GetArea() const;
 	Circle				GetCircle() const;
-	AABB				ConstructCenteredAABB() const;
 	void				OnTransformUpdated();
 
 	Vec2				TransformPoint(const Vec2& point) const;
