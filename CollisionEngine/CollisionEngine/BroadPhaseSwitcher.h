@@ -24,5 +24,7 @@ public:
 		return m_broadPhase.get();
 	}
 
+	void GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck);
+
 	void Reset();
 };

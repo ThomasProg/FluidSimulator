@@ -70,7 +70,7 @@ void	CPhysicEngine::Step(float deltaTime)
 void	CPhysicEngine::CollisionBroadPhase()
 {
 	m_pairsToCheck.clear();
-	m_broadPhase->GetCollidingPairsToCheck(m_pairsToCheck);
+	m_broadPhase.GetCollidingPairsToCheck(m_pairsToCheck);
 	gVars->pRenderer->DisplayText("Amount of pairs to check : " + std::to_string(m_pairsToCheck.size()));
 }
 

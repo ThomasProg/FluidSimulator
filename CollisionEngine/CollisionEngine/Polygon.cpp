@@ -34,6 +34,20 @@ void CPolygon::Draw()
 	glPushMatrix();
 	glMultMatrixf(transfMat);
 
+	switch (collisionState)
+	{
+		case CollisionState::NOT_COLLIDING:
+			glColor3f(0.0, 0.0, 0.0);
+			break;
+		case CollisionState::BROAD_PHASE_SUCCESS:
+			glColor3f(0.0, 0.8, 0.0);
+			break;
+
+		case CollisionState::NARROW_PHASE_SUCCESS:
+			glColor3f(0.0, 0.0, 0.8);
+			break;
+	}
+
 	// Draw vertices
 	BindBuffers();
 	glDrawArrays(GL_LINE_LOOP, 0, points.size());

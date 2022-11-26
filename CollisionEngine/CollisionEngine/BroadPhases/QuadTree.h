@@ -262,6 +262,11 @@ public:
 		{
 			gVars->pRenderer->DisplayText("QuadTree");
 			DisplayDebugForNode(treeRoot, 1);
+
+			for (std::unique_ptr<PolygonWithQuadTreeData>& poly : polys)
+			{
+				gVars->pRenderer->DrawAABB(poly->moveableAABB.GetmovedAABB(), 0.3, 0.3, 0.3);
+			}
 		}
 	}
 

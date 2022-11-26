@@ -55,3 +55,20 @@ void BroadPhaseSwitcher::SetBroadPhase(std::unique_ptr<IBroadPhase>&& newBroadPh
 		m_polygons.push_back(poly);
 	}
 }
+
+void BroadPhaseSwitcher::GetCollidingPairsToCheck(std::vector<SPolygonPair>& pairsToCheck)
+{
+	for (auto& poly : m_polygons)
+	{
+		poly->collisionState = CollisionState::NOT_COLLIDING;
+	}
+
+	m_broadPhase->GetCollidingPairsToCheck(pairsToCheck);
+
+	// TODO : Clean?
+	for (auto& pair : pairsToCheck)
+	{
+		pair.GetpolyA()->collisionState = CollisionState::BROAD_PHASE_SUCCESS;
+		pair.GetpolyB()->collisionState = CollisionState::BROAD_PHASE_SUCCESS;
+	}
+}

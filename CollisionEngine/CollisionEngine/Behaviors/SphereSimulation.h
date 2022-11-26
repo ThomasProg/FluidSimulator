@@ -84,7 +84,7 @@ private:
 		}
 
 		std::vector<SPolygonPair> pairsToCheck;
-		broadPhase->GetCollidingPairsToCheck(pairsToCheck);
+		broadPhase.GetCollidingPairsToCheck(pairsToCheck);
 		gVars->pRenderer->DisplayText("Amount of pairs to check : " + std::to_string(pairsToCheck.size()));
 
 		for (SPolygonPair pair : pairsToCheck)

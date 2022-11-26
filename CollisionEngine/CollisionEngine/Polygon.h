@@ -9,6 +9,13 @@
 
 #include "Maths.h"
 
+enum class CollisionState
+{
+	NOT_COLLIDING,
+	BROAD_PHASE_SUCCESS,
+	NARROW_PHASE_SUCCESS
+};
+
 class CPolygon
 {
 private:
@@ -23,6 +30,8 @@ private:
 	Mat2				rotation;
 
 public:
+	CollisionState collisionState = CollisionState::NOT_COLLIDING;
+
 	std::function<void(const CPolygon&)> onTransformUpdatedCallback;
 
 	GETTER(position)
