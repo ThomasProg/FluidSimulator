@@ -3,6 +3,7 @@
 
 
 #include "PhysicEngine.h"
+#include "NarrowPhases/SeparatingAxisTest.h"
 
 CPolygon::CPolygon(size_t index)
 	: m_vertexBufferId(0), m_index(index), density(0.1f)
@@ -119,9 +120,20 @@ bool	CPolygon::IsPointInside(const Vec2& point) const
 	return maxDist <= 0.0f;
 }
 
+void CPolygon::UpdateTransformedPoints()
+{
+	transformedPoints.resize(points.size());
+	for (int i = 0; i < points.size(); i++)
+	{
+		transformedPoints[i] = rotation * points[i] + position;
+	}
+}
+
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
 {
-	return false;
+	SeparatingAxisTest sat;
+	return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+	//return false;
 }
 
 void CPolygon::CreateBuffers()

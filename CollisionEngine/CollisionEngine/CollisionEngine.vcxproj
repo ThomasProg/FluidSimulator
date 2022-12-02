@@ -107,6 +107,10 @@
     <ClInclude Include="BroadPhases\SweepAndPrune.h" />
     <ClInclude Include="Conversion.h" />
     <ClInclude Include="GlobalVariables.h" />
+    <ClInclude Include="NarrowPhase.h" />
+    <ClInclude Include="NarrowPhases\GilbertJohnsonKeerthi.h" />
+    <ClInclude Include="NarrowPhases\MinkowskiPortalRefinement.h" />
+    <ClInclude Include="NarrowPhases\SeparatingAxisTest.h" />
     <ClInclude Include="PhysicEngine.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderWindow.h" />

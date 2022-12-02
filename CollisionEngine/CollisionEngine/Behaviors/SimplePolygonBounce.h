@@ -19,7 +19,7 @@ private:
 
 			collision.polyA->speed.Reflect(collision.normal);
 			collision.polyB->speed.Reflect(collision.normal);
-			});
+		});
 
 		float hWidth = gVars->pRenderer->GetWorldWidth() * 0.5f;
 		float hHeight = gVars->pRenderer->GetWorldHeight() * 0.5f;

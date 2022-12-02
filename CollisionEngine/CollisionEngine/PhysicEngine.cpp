@@ -82,9 +82,13 @@ void	CPhysicEngine::CollisionNarrowPhase()
 		SCollision collision;
 		collision.polyA = pair.GetpolyA();
 		collision.polyB = pair.GetpolyB();
+		collision.polyA->UpdateTransformedPoints();
+		collision.polyB->UpdateTransformedPoints();
 		if (pair.GetpolyA()->CheckCollision(*(pair.GetpolyB()), collision.point, collision.normal, collision.distance)) 
 		{
 			m_collidingPairs.push_back(collision);
+			pair.GetpolyA()->collisionState = CollisionState::NARROW_PHASE_SUCCESS;
+			pair.GetpolyB()->collisionState = CollisionState::NARROW_PHASE_SUCCESS;
 		}
 	}
 }

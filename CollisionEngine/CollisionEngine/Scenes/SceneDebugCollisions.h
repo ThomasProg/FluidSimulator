@@ -5,6 +5,7 @@
 
 #include "Behaviors/DisplayCollision.h"
 #include "BroadPhaseSwitcher.h"
+#include "NarrowPhases/SeparatingAxisTest.h"
 
 class CSceneDebugCollisions : public CBaseScene
 {
@@ -51,6 +52,31 @@ private:
 			std::vector<SPolygonPair> pairs;
 			m_broadPhase.GetCollidingPairsToCheck(pairs);
 			gVars->pRenderer->DisplayText("Amount of pairs to check : " + std::to_string(pairs.size()));
+
+			std::vector<SCollision> collisions;
+			for (const SPolygonPair& pair : pairs)
+			{
+				SCollision collision;
+				collision.polyA = pair.GetpolyA();
+				collision.polyB = pair.GetpolyB();
+				collision.polyA->UpdateTransformedPoints();
+				collision.polyB->UpdateTransformedPoints();
+				if (pair.GetpolyA()->CheckCollision(*(pair.GetpolyB()), collision.point, collision.normal, collision.distance))
+				{
+					collisions.push_back(collision);
+					pair.GetpolyA()->collisionState = CollisionState::NARROW_PHASE_SUCCESS;
+					pair.GetpolyB()->collisionState = CollisionState::NARROW_PHASE_SUCCESS;
+				}
+			}
+
+			//for (SCollision& collision : collisions)
+			//{
+			//	collision.polyA->Setposition(collision.polyA->Getposition() + collision.normal * collision.distance * -0.5f);
+			//	collision.polyB->Setposition(collision.polyB->Getposition() + collision.normal * collision.distance * 0.5f);
+
+			//	collision.polyA->speed.Reflect(collision.normal);
+			//	collision.polyB->speed.Reflect(collision.normal);
+			//}
 		}
 
 		void AddPolygon(const CPolygonPtr& polygon)

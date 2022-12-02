@@ -47,8 +47,10 @@ class CPolygonMoverTool : public CBehavior
 
 				if (m_translate)
 				{
+					Vec2 diff = m_selectedPoly->Getposition();
 					m_selectedPoly->Setposition(m_selectedPoly->Getposition() + mousePoint - m_prevMousePos);
-					m_selectedPoly->speed = Vec2();
+					diff -= m_selectedPoly->Getposition();
+					m_selectedPoly->speed = diff;
 				}
 				else
 				{

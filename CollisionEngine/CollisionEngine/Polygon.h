@@ -41,6 +41,9 @@ public:
 	SETTER(rotation, OnTransformUpdated)
 
 	std::vector<Vec2>	points;
+	std::vector<Vec2>	transformedPoints;
+
+	void				UpdateTransformedPoints();
 
 	void				Build();
 	void				Draw();

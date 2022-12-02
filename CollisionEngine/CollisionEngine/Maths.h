@@ -148,6 +148,11 @@ struct Vec2
 		float angle = RAD2DEG(acosf(cosAngle)) * Sign(*this ^ to);
 		return angle;
 	}
+
+	static float Dot(const Vec2& v1, const Vec2& v2)
+	{
+		return v1.x * v2.x + v1.y * v2.y;
+	}
 };
 
 struct Vec2Int

@@ -22,6 +22,9 @@
     <Filter Include="Fichiers sources\BroadPhases">
       <UniqueIdentifier>{675ddf78-471d-46a5-a31a-193e5e0a3177}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\NarrowPhases">
+      <UniqueIdentifier>{de471cba-06e7-4c07-a3df-0037190003b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -119,6 +122,18 @@
     </ClInclude>
     <ClInclude Include="BroadPhaseSwitcher.h">
       <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="NarrowPhase.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="NarrowPhases\GilbertJohnsonKeerthi.h">
+      <Filter>Fichiers sources\NarrowPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="NarrowPhases\MinkowskiPortalRefinement.h">
+      <Filter>Fichiers sources\NarrowPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="NarrowPhases\SeparatingAxisTest.h">
+      <Filter>Fichiers sources\NarrowPhases</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
