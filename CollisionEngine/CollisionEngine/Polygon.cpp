@@ -5,6 +5,7 @@
 #include "PhysicEngine.h"
 #include "NarrowPhases/SeparatingAxisTest.h"
 #include "NarrowPhases/GilbertJohnsonKeerthi.h"
+#include "NarrowPhases/ExpandingPolytopeAlgorithm.h"
 
 
 CPolygon::CPolygon(size_t index)
@@ -20,6 +21,15 @@ CPolygon::~CPolygon()
 void CPolygon::Build()
 {
 	m_lines.clear();
+
+	//if (points.size() > 2)
+	//{
+	//	Vec2 edge = points[0] - points[1];
+	//	if (Vec2::Dot(-points[0], edge.GetNormal()) > 0)
+	//	{
+	//		std::reverse(points.begin(), points.end());
+	//	}
+	//}
 
 	CreateBuffers();
 	BuildLines();
@@ -135,8 +145,13 @@ bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNor
 {
 	//SeparatingAxisTest sat;
 	//return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
-	GilbertJohnsonKeerthi gjk;
-	return gjk.CheckCollision(*this, poly);
+	
+	//GilbertJohnsonKeerthi gjk;
+	//return gjk.CheckCollision(*this, poly);
+
+	ExpandingPolytopeAlgorithm epa;
+	return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+
 
 	//return false;
 }

@@ -50,6 +50,11 @@ struct Vec2
 
 	Vec2(float _x, float _y) : x(_x), y(_y){}
 
+	bool operator==(const Vec2& rhs) const
+	{
+		return (*this - rhs).GetSqrLength() < 0.001;
+	}
+
 	Vec2 operator+(const Vec2& rhs) const
 	{
 		return Vec2(x + rhs.x, y + rhs.y);
@@ -399,6 +404,30 @@ Vec2 GetFarthestPointInDirectionWithConvexShape(const CONTAINER& container, Vec2
 	return pointWithProjMax;
 }
 
+// TODO : same but returning iterator, and taking start iterator as input to use spatial coherence
+template<typename CONTAINER>
+auto GetFarthestPointItInDirectionWithConvexShape(const CONTAINER& container, Vec2::TConstArg direction)
+{
+	assert(container.size() != 0);
+	CONTAINER::const_iterator itWithProjMax = container.begin();
+	float projMax = Vec2::Dot(*itWithProjMax, direction);
+	for (auto it = container.begin() + 1; it != container.end(); it++)
+	{
+		float proj = Vec2::Dot(*it, direction);
+		if (proj < projMax)
+			continue;
+
+		do
+		{
+			projMax = proj;
+			itWithProjMax = it;
+			it++;
+		} while (it != container.end() && (proj = Vec2::Dot(*it, direction)) > projMax);
+		return itWithProjMax;
+	}
+	return itWithProjMax;
+}
+
 struct Triangle
 {
 	Vec2 a, b, c;
@@ -410,35 +439,6 @@ struct Triangle
 		bool b3 = Vec2::Dot(p - c, (a - c).GetNormal()) < 0;
 
 		return b1 == b2 && b2 == b3;
-	}
-
-	bool GetPointsOfClosestEdge(Vec2 pTarget, Vec2& p1, Vec2& p2, Vec2& n) const
-	{
-		Vec2 ac = c - a;
-		Vec2 ab = b - a;
-		Vec2 ap = pTarget - a;
-
-		// Try to make a triangle on AB side
-		Vec2 nAB = Vec2::TripleProduct(ac, ab, ab);
-		if (Vec2::Dot(nAB, ap) > 0)
-		{
-			p1 = a;
-			p2 = b;
-			n = nAB;
-			return false;
-		}
-
-		// Try to make a triangle on AC side
-		Vec2 nAC = Vec2::TripleProduct(ab, ac, ac);
-		if (Vec2::Dot(nAC, ap) > 0)
-		{
-			p1 = a;
-			p2 = c;
-			n = nAC;
-			return false;
-		}
-
-		return true;
 	}
 };
 
