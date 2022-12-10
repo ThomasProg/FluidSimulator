@@ -4,6 +4,8 @@
 
 #include "PhysicEngine.h"
 #include "NarrowPhases/SeparatingAxisTest.h"
+#include "NarrowPhases/GilbertJohnsonKeerthi.h"
+
 
 CPolygon::CPolygon(size_t index)
 	: m_vertexBufferId(0), m_index(index), density(0.1f)
@@ -131,8 +133,11 @@ void CPolygon::UpdateTransformedPoints()
 
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
 {
-	SeparatingAxisTest sat;
-	return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+	//SeparatingAxisTest sat;
+	//return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+	GilbertJohnsonKeerthi gjk;
+	return gjk.CheckCollision(*this, poly);
+
 	//return false;
 }
 

@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -108,6 +108,7 @@
     <ClInclude Include="Conversion.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="NarrowPhase.h" />
+    <ClInclude Include="NarrowPhases\ExpandingPolytopeAlgorithm.h" />
     <ClInclude Include="NarrowPhases\GilbertJohnsonKeerthi.h" />
     <ClInclude Include="NarrowPhases\MinkowskiPortalRefinement.h" />
     <ClInclude Include="NarrowPhases\SeparatingAxisTest.h" />

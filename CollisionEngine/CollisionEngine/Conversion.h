@@ -21,16 +21,17 @@ inline AABB PolyToBaseAABB(const CPolygonPtr& poly)
 	return baseAABB;
 }
 
-inline AABB TransformAABB(AABB baseAABB, const Vec2& pos)
+inline AABB TransformAABB(AABB baseAABB, const Vec2& pos, const Mat2& rot)
 {
-	baseAABB.pMin += pos;
-	baseAABB.pMax += pos;
-	return baseAABB;
+	MoveableAABB moveableAABB;
+	moveableAABB.SetbaseAABB(baseAABB);
+	moveableAABB.SetTransform(pos, rot);
+	return moveableAABB.GetmovedAABB();
 }
 
 inline AABB PolyToTransformedAABB(const CPolygonPtr& poly, AABB baseAABB)
 {
-	return TransformAABB(baseAABB, poly->Getposition());
+	return TransformAABB(baseAABB, poly->Getposition(), poly->Getrotation());
 }
 
 inline void UpdateAABBTransformFromPolygon(MoveableAABB& aabb, const CPolygon& poly)

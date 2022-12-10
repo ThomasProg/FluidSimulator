@@ -94,7 +94,7 @@ private:
 			
 			Vec2 diffPos = c2->Getposition() - c1->Getposition();
 			Vec2 diffSpeed = c2->speed - c1->speed;
-			if (diffPos.GetSqrLength() < 4.0f * RADIUS * RADIUS && ((diffSpeed | diffPos) < 0.0f))
+			if (diffPos.GetSqrLength() < 4.0f * RADIUS * RADIUS && (Vec2::Dot(diffSpeed, diffPos) < 0.0f))
 			{
 				// TODO : Handle collisions here
 				c1->speed = Vec2();

@@ -135,6 +135,9 @@
     <ClInclude Include="NarrowPhases\SeparatingAxisTest.h">
       <Filter>Fichiers sources\NarrowPhases</Filter>
     </ClInclude>
+    <ClInclude Include="NarrowPhases\ExpandingPolytopeAlgorithm.h">
+      <Filter>Fichiers sources\NarrowPhases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

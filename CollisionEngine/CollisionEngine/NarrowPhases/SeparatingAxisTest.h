@@ -3,6 +3,7 @@
 #include "Polygon.h"
 #include <cassert>
 
+#undef max
 #define out
 
 class SeparatingAxisTest
@@ -48,8 +49,6 @@ public:
 
 	}
 
-#undef max
-
 	bool CheckCollision(const CPolygon& poly1, const CPolygon& poly2, Vec2& colPoint, Vec2& colNormal, float& colDist) 
 	{
 		colPoint = Vec2(100, 100);
@@ -88,18 +87,28 @@ public:
 			}
 			else 
 			{
-				float overlap = Min(maxp1, maxp2) - Max(minp1, minp2);
+				float minMaxProj = Min(maxp1, maxp2);
+				float maxMinProj = Max(minp1, minp2);
+				float overlap = minMaxProj - maxMinProj;
 				if (overlap < smallestOverlap)
 				{
-					smallestOverlap = overlap;
-					axisWithSmallestOverlap = axis;	
+					Vec2 collisionPoint;
 					if (i < poly1StartID)
 					{
-						colPoint = maxPoint1;
+						collisionPoint = maxPoint1;
 					}
 					else
 					{
-						colPoint = minPoint2;
+						collisionPoint = minPoint2;
+					}
+
+					// To prevent bugs when multiple edges with the same normal axis exist
+					float v = Vec2::Dot(collisionPoint, axis);
+					if (v <= minMaxProj && v >= maxMinProj)
+					{
+						smallestOverlap = overlap;
+						axisWithSmallestOverlap = axis;
+						colPoint = collisionPoint;
 					}
 				}
 			}

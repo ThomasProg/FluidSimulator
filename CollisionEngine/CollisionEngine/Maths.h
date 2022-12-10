@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <vector>
+#include <cassert>
 
 #define GETTER(var) inline const decltype(var)& Get##var() const { return var; }
 #define SETTER(var, callback) inline void Set##var(const decltype(var)& value) { var = value; callback(); }
@@ -41,6 +42,8 @@ float Random(float from, float to);
 
 struct Vec2
 {
+	using TConstArg = const Vec2&;
+
 	float x, y;
 
 	Vec2() : x(0.0f), y(0.0f){}
@@ -98,11 +101,6 @@ struct Vec2
 		return *this;
 	}
 
-	float operator|(const Vec2& rhs) const
-	{
-		return x * rhs.x + y * rhs.y;
-	}
-
 	float operator^(const Vec2& rhs) const
 	{
 		return x * rhs.y - y * rhs.x;
@@ -134,7 +132,7 @@ struct Vec2
 
 	void Reflect(Vec2 normal, float elasticity = 1.0f)
 	{
-		*this = *this - normal * (1.0f + elasticity) * (*this | normal);
+		*this = *this - normal * (1.0f + elasticity) * Dot(*this, normal);
 	}
 
 	Vec2 GetNormal() const
@@ -144,7 +142,7 @@ struct Vec2
 
 	float Angle(const Vec2& to)
 	{
-		float cosAngle = Clamp(Normalized() | to.Normalized(), -1.0f, 1.0f);
+		float cosAngle = Clamp(Dot(Normalized(), to.Normalized()), -1.0f, 1.0f);
 		float angle = RAD2DEG(acosf(cosAngle)) * Sign(*this ^ to);
 		return angle;
 	}
@@ -152,6 +150,11 @@ struct Vec2
 	static float Dot(const Vec2& v1, const Vec2& v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y;
+	}
+
+	static Vec2 TripleProduct(Vec2 a, Vec2 b, Vec2 c)
+	{
+		return b * Vec2::Dot(c, a) - a * Vec2::Dot(c, b);
 	}
 };
 
@@ -225,7 +228,7 @@ struct Line
 	// positive value means point above line, negative means point is under line
 	float	GetPointDist(const Vec2& pt) const
 	{
-		return (pt - point) | GetNormal();
+		return Vec2::Dot(pt - point, GetNormal());
 	}
 
 	Line	Transform(const Mat2& rotation, const Vec2& position) const
@@ -235,7 +238,7 @@ struct Line
 
 	Vec2	Project(const Vec2& pt) const
 	{
-		return point + dir * ((pt - point) | dir);
+		return point + dir * Vec2::Dot((pt - point), dir);
 	}
 };
 
@@ -351,6 +354,91 @@ public:
 		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMin.x, baseAABB.pMax.y)));
 		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMax.x, baseAABB.pMin.y)));
 		movedAABB.Translate(newPos);
+	}
+};
+
+template<typename CONTAINER>
+Vec2 GetFarthestPointInDirection(const CONTAINER& container, Vec2::TConstArg direction)
+{
+	assert(container.size() != 0);
+	float projMax = std::numeric_limits<float>::lowest();
+	Vec2 pointWithProjMax;
+	for (auto it = container.begin(); it != container.end(); it++)
+	{
+		float proj = Vec2::Dot(*it, direction);
+		if (proj > projMax)
+		{
+			projMax = proj;
+			pointWithProjMax = *it;
+		}
+	}
+	return pointWithProjMax;
+}
+
+// TODO : same but returning iterator, and taking start iterator as input to use spatial coherence
+template<typename CONTAINER>
+Vec2 GetFarthestPointInDirectionWithConvexShape(const CONTAINER& container, Vec2::TConstArg direction)
+{
+	assert(container.size() != 0);
+	Vec2 pointWithProjMax = *container.begin();
+	float projMax = Vec2::Dot(pointWithProjMax, direction);
+	for (auto it = container.begin() + 1; it != container.end(); it++)
+	{
+		float proj = Vec2::Dot(*it, direction);
+		if (proj < projMax)
+			continue;
+
+		do 
+		{
+			projMax = proj;
+			pointWithProjMax = *it;
+			it++;
+		} while (it != container.end() && (proj = Vec2::Dot(*it, direction)) > projMax);
+		return pointWithProjMax;
+	}
+	return pointWithProjMax;
+}
+
+struct Triangle
+{
+	Vec2 a, b, c;
+
+	bool ContainsPoint(Vec2 p) const 
+	{
+		bool b1 = Vec2::Dot(p - a, (b - a).GetNormal()) < 0;
+		bool b2 = Vec2::Dot(p - b, (c - b).GetNormal()) < 0;
+		bool b3 = Vec2::Dot(p - c, (a - c).GetNormal()) < 0;
+
+		return b1 == b2 && b2 == b3;
+	}
+
+	bool GetPointsOfClosestEdge(Vec2 pTarget, Vec2& p1, Vec2& p2, Vec2& n) const
+	{
+		Vec2 ac = c - a;
+		Vec2 ab = b - a;
+		Vec2 ap = pTarget - a;
+
+		// Try to make a triangle on AB side
+		Vec2 nAB = Vec2::TripleProduct(ac, ab, ab);
+		if (Vec2::Dot(nAB, ap) > 0)
+		{
+			p1 = a;
+			p2 = b;
+			n = nAB;
+			return false;
+		}
+
+		// Try to make a triangle on AC side
+		Vec2 nAC = Vec2::TripleProduct(ab, ac, ac);
+		if (Vec2::Dot(nAC, ap) > 0)
+		{
+			p1 = a;
+			p2 = c;
+			n = nAC;
+			return false;
+		}
+
+		return true;
 	}
 };
 
