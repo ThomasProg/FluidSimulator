@@ -51,8 +51,6 @@ public:
 
 	bool CheckCollision(const CPolygon& poly1, const CPolygon& poly2, Vec2& colPoint, Vec2& colNormal, float& colDist) 
 	{
-		colPoint = Vec2(100, 100);
-
 		std::vector<Vec2> allAxis;
 		allAxis.reserve(poly1.transformedPoints.size() + poly2.transformedPoints.size());
 		

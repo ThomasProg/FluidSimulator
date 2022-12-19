@@ -20,8 +20,18 @@ Inputs :
 a first AABB is computed from the original shape
 a second one is computed from the first rotated aabb to prevent looping over all the points for a shape, which could be unoptimized
 
+NarrowPhases implemented : 
+- SAT 
+- GJK 
+- EPA
+
+The narrow phases are used in Polygon.cpp, in CheckCollision().
+To change the narrow phase, just comment / uncomment.
+The SAT and the EPA both display the correct collision point, normal and MTV.
+I have explained the SAT algorithms, and potential optimizations and all on my website : 
+https://thomasprog.github.io/Algo-A-to-Z/collisions/narrowphase/sat/
+
 TODO : 
 - Finish implement AABBTree 
 - Implementing other broadphases
-- Narrow phase 
 - Physics Response

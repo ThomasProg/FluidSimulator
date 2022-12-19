@@ -151,9 +151,6 @@ bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNor
 
 	ExpandingPolytopeAlgorithm epa;
 	return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
-
-
-	//return false;
 }
 
 void CPolygon::CreateBuffers()
