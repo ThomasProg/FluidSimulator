@@ -138,6 +138,39 @@
     <ClInclude Include="NarrowPhases\ExpandingPolytopeAlgorithm.h">
       <Filter>Fichiers sources\NarrowPhases</Filter>
     </ClInclude>
+    <ClInclude Include="Scenes\SceneComplexPhysic.h">
+      <Filter>Fichiers sources\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneSimplePhysic.h">
+      <Filter>Fichiers sources\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneSmallPhysic.h">
+      <Filter>Fichiers sources\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviors\DisplayManifold.h">
+      <Filter>Fichiers sources\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviors\FluidSimulation.h">
+      <Filter>Fichiers sources\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneFluid.h">
+      <Filter>Fichiers sources\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidMesh.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidSpawner.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidSystem.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="InertiaTensor.h">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviors\PhysicsResponse.h">
+      <Filter>Fichiers sources\Behaviors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -174,6 +207,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="BroadPhaseSwitcher.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidSystem.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="InertiaTensor.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

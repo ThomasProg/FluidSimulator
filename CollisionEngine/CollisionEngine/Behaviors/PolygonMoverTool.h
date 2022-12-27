@@ -51,6 +51,7 @@ class CPolygonMoverTool : public CBehavior
 					m_selectedPoly->Setposition(m_selectedPoly->Getposition() + mousePoint - m_prevMousePos);
 					diff -= m_selectedPoly->Getposition();
 					m_selectedPoly->speed = diff;
+					m_selectedPoly->angularVelocity = 0.0f;
 				}
 				else
 				{
@@ -60,6 +61,7 @@ class CPolygonMoverTool : public CBehavior
 					Mat2 rot;
 					rot.SetAngle(m_clickAngle + from.Angle(to));
 					m_selectedPoly->Setrotation(rot);
+					m_selectedPoly->angularVelocity = 0.0f;
 					m_selectedPoly->speed = Vec2();
 				}
 

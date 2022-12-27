@@ -7,6 +7,8 @@
 #include "NarrowPhases/GilbertJohnsonKeerthi.h"
 #include "NarrowPhases/ExpandingPolytopeAlgorithm.h"
 
+#include "InertiaTensor.h"
+
 
 CPolygon::CPolygon(size_t index)
 	: m_vertexBufferId(0), m_index(index), density(0.1f)
@@ -30,6 +32,10 @@ void CPolygon::Build()
 	//		std::reverse(points.begin(), points.end());
 	//	}
 	//}
+
+	ComputeArea();
+	RecenterOnCenterOfMass();
+	ComputeLocalInertiaTensor();
 
 	CreateBuffers();
 	BuildLines();
@@ -72,6 +78,11 @@ void CPolygon::Draw()
 size_t	CPolygon::GetIndex() const
 {
 	return m_index;
+}
+
+float	CPolygon::GetArea() const
+{
+	return fabsf(m_signedArea);
 }
 
 Circle CPolygon::GetCircle() const
@@ -141,6 +152,36 @@ void CPolygon::UpdateTransformedPoints()
 	}
 }
 
+bool	CPolygon::IsLineIntersectingPolygon(const Line& line, Vec2& colPoint, float& colDist) const
+{
+	//float dist = 0.0f;
+	float minDist = FLT_MAX;
+	Vec2 minPoint;
+	float lastDist = 0.0f;
+	bool intersecting = false;
+
+	for (const Vec2& point : points)
+	{
+		Vec2 globalPoint = TransformPoint(point);
+		float dist = line.GetPointDist(globalPoint);
+		if (dist < minDist)
+		{
+			minPoint = globalPoint;
+			minDist = dist;
+		}
+
+		intersecting = intersecting || (dist != 0.0f && lastDist * dist < 0.0f);
+		lastDist = dist;
+	}
+
+	if (minDist <= 0.0f)
+	{
+		colDist = -minDist;
+		colPoint = minPoint;
+	}
+	return (minDist <= 0.0f);
+}
+
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
 {
 	//SeparatingAxisTest sat;
@@ -152,6 +193,22 @@ bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNor
 	ExpandingPolytopeAlgorithm epa;
 	return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
 }
+
+float CPolygon::GetMass() const
+{
+	return density * GetArea();
+}
+
+float CPolygon::GetInertiaTensor() const
+{
+	return m_localInertiaTensor * GetMass();
+}
+
+Vec2 CPolygon::GetPointVelocity(const Vec2& point) const
+{
+	return speed + (point - position).GetNormal() * angularVelocity;
+}
+
 
 void CPolygon::CreateBuffers()
 {
@@ -209,4 +266,48 @@ void CPolygon::BuildLines()
 	}
 }
 
+
+void CPolygon::ComputeArea()
+{
+	m_signedArea = 0.0f;
+	for (size_t index = 0; index < points.size(); ++index)
+	{
+		const Vec2& pointA = points[index];
+		const Vec2& pointB = points[(index + 1) % points.size()];
+		m_signedArea += pointA.x * pointB.y - pointB.x * pointA.y;
+	}
+	m_signedArea *= 0.5f;
+}
+
+void CPolygon::RecenterOnCenterOfMass()
+{
+	Vec2 centroid;
+	for (size_t index = 0; index < points.size(); ++index)
+	{
+		const Vec2& pointA = points[index];
+		const Vec2& pointB = points[(index + 1) % points.size()];
+		float factor = pointA.x * pointB.y - pointB.x * pointA.y;
+		centroid.x += (pointA.x + pointB.x) * factor;
+		centroid.y += (pointA.y + pointB.y) * factor;
+	}
+	centroid /= 6.0f * m_signedArea;
+
+	for (Vec2& point : points)
+	{
+		point -= centroid;
+	}
+	position += centroid;
+}
+
+void CPolygon::ComputeLocalInertiaTensor()
+{
+	m_localInertiaTensor = 0.0f;
+	for (size_t i = 0; i + 1 < points.size(); ++i)
+	{
+		const Vec2& pointA = points[i];
+		const Vec2& pointB = points[i + 1];
+
+		m_localInertiaTensor += ComputeInertiaTensor_Triangle(Vec2(), pointA, pointB);
+	}
+}
 

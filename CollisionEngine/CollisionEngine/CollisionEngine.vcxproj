@@ -94,6 +94,9 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Behavior.h" />
     <ClInclude Include="Behaviors\DisplayCollision.h" />
+    <ClInclude Include="Behaviors\DisplayManifold.h" />
+    <ClInclude Include="Behaviors\FluidSimulation.h" />
+    <ClInclude Include="Behaviors\PhysicsResponse.h" />
     <ClInclude Include="Behaviors\PolygonMoverTool.h" />
     <ClInclude Include="Behaviors\SimplePolygonBounce.h" />
     <ClInclude Include="Behaviors\SphereSimulation.h" />
@@ -106,7 +109,11 @@
     <ClInclude Include="BroadPhases\QuadTree.h" />
     <ClInclude Include="BroadPhases\SweepAndPrune.h" />
     <ClInclude Include="Conversion.h" />
+    <ClInclude Include="FluidMesh.h" />
+    <ClInclude Include="FluidSpawner.h" />
+    <ClInclude Include="FluidSystem.h" />
     <ClInclude Include="GlobalVariables.h" />
+    <ClInclude Include="InertiaTensor.h" />
     <ClInclude Include="NarrowPhase.h" />
     <ClInclude Include="NarrowPhases\ExpandingPolytopeAlgorithm.h" />
     <ClInclude Include="NarrowPhases\GilbertJohnsonKeerthi.h" />
@@ -118,7 +125,11 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Scenes\BaseScene.h" />
     <ClInclude Include="Scenes\SceneBouncingPolys.h" />
+    <ClInclude Include="Scenes\SceneComplexPhysic.h" />
     <ClInclude Include="Scenes\SceneDebugCollisions.h" />
+    <ClInclude Include="Scenes\SceneFluid.h" />
+    <ClInclude Include="Scenes\SceneSimplePhysic.h" />
+    <ClInclude Include="Scenes\SceneSmallPhysic.h" />
     <ClInclude Include="Scenes\SceneSpheres.h" />
     <ClInclude Include="SDLRenderWindow.h" />
     <ClInclude Include="World.h" />
@@ -130,6 +141,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BroadPhaseSwitcher.cpp" />
+    <ClCompile Include="FluidSystem.cpp" />
+    <ClCompile Include="InertiaTensor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GlobaleVariables.cpp" />
     <ClCompile Include="Maths.cpp" />

@@ -13,6 +13,9 @@
 #include "Scenes/SceneDebugCollisions.h"
 #include "Scenes/SceneBouncingPolys.h"
 #include "Scenes/SceneSpheres.h"
+#include "Scenes/SceneSimplePhysic.h"
+#include "Scenes/SceneSmallPhysic.h"
+#include "Scenes/SceneComplexPhysic.h"
 
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 /*
@@ -25,6 +28,9 @@ int _tmain(int argc, char** argv)
     gVars->pSceneManager->AddScene(new CSceneDebugCollisions());
     gVars->pSceneManager->AddScene(new CSceneBouncingPolys(200));
     gVars->pSceneManager->AddScene(new CSceneSpheres());
+    gVars->pSceneManager->AddScene(new CSceneSimplePhysic());
+    gVars->pSceneManager->AddScene(new CSceneSmallPhysic());
+    gVars->pSceneManager->AddScene(new CSceneComplexPhysic(25));
 
 
     RunApplication();
