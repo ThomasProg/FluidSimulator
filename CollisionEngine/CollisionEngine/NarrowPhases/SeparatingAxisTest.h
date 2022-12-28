@@ -112,12 +112,8 @@ public:
 			}
 		}
 
-		if (Vec2::Dot(poly1.speed, axisWithSmallestOverlap) > 0)
-			axisWithSmallestOverlap *= -1;
-
 		colDist = smallestOverlap;
 		colNormal = axisWithSmallestOverlap.Normalized();
-		// TODO : set point
 
 		return true;
 	}

@@ -19,30 +19,47 @@ private:
 		CPolygonPtr block = gVars->pWorld->AddRectangle(coeff * 13.0f, coeff * 15.0f);
 		block->Setposition(Vec2(0.0f, -coeff * 7.0f));
 		block->density = 0.0f;
+		block->invMass = 0.0f;
 		gVars->pPhysicEngine->AddPolygon(block);
 
-		CPolygonPtr rectangle = gVars->pWorld->AddRectangle(coeff * 30.0f, coeff * 10.0f);
-		rectangle->Setposition(Vec2(coeff * 15.0f, coeff * 5.0f));
-		gVars->pPhysicEngine->AddPolygon(rectangle);
+		//CPolygonPtr rectangle = gVars->pWorld->AddRectangle(coeff * 30.0f, coeff * 10.0f);
+		//rectangle->Setposition(Vec2(coeff * 15.0f, coeff * 5.0f));
+		//gVars->pPhysicEngine->AddPolygon(rectangle);
 
-		for (int i = 0; i < 4; ++i)
+		//for (int i = 0; i < 1; ++i)
+		//{
+
+		//	CPolygonPtr sqr = gVars->pWorld->AddSquare(coeff * 10.0f);
+		//	sqr->density = 0.5f;
+		//	sqr->Setposition(Vec2(coeff * 15.0f, coeff * 15.0f));
+		//	sqr->invMass = 1.f;
+		//	gVars->pPhysicEngine->AddPolygon(sqr);
+		//}
+
+		CPolygonPtr sqr;
+		for (int i = 0; i < 1; ++i)
 		{
 
-			CPolygonPtr sqr = gVars->pWorld->AddSquare(coeff * 10.0f);
+			sqr = gVars->pWorld->AddSquare(coeff * 10.0f);
 			sqr->density = 0.5f;
-			sqr->Setposition(Vec2(coeff * 15.0f, coeff * 15.0f));
+			sqr->Setposition(Vec2(coeff * 15.0f - 4, coeff * 15.0f));
+			sqr->invMass = 1.f / 5.f;
 			gVars->pPhysicEngine->AddPolygon(sqr);
 		}
-		CPolygonPtr tri = gVars->pWorld->AddTriangle(coeff * 5.0f, coeff * 5.0f);
-		tri->Setposition(Vec2(coeff * 5.0f, coeff * 15.0f));
-		tri->density *= 5.0f;
-		gVars->pPhysicEngine->AddPolygon(tri);
-		//
-		CPolygonPtr sphere = gVars->pWorld->AddSymetricPolygon(coeff * 10.0f, 50);
-		sphere->Setposition(Vec2(-coeff * 20.0f, coeff * 5.0f));
-		gVars->pPhysicEngine->AddPolygon(sphere);
+		//CPolygonPtr tri = gVars->pWorld->AddTriangle(coeff * 5.0f, coeff * 5.0f);
+		//tri->Setposition(Vec2(coeff * 5.0f, coeff * 15.0f));
+		//tri->density *= 5.0f;
+		//gVars->pPhysicEngine->AddPolygon(tri);
+		////
+		//CPolygonPtr sphere = gVars->pWorld->AddSymetricPolygon(coeff * 10.0f, 50);
+		//sphere->Setposition(Vec2(-coeff * 20.0f, coeff * 5.0f));
+		//gVars->pPhysicEngine->AddPolygon(sphere);
 
-		gVars->pWorld->AddBehavior<CPhysicsResponse>(nullptr);
+		CBehaviorPtr b = gVars->pWorld->AddBehavior<CPhysicsResponse>(nullptr);
+		CPhysicsResponse* bCast = (CPhysicsResponse*) b.get();
+		bCast->polyToSpeed = sqr;
+
+		//sqr->ApplyForce(sqr->Getposition(), Vec2(-10, 0));
 
 	}
 

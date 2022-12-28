@@ -66,9 +66,6 @@ void	CPhysicEngine::Step(float deltaTime)
 		return;
 	}
 
-	Vec2 gravity(0, -9.8f);
-	float elasticity = 0.6f;
-
 	gVars->pWorld->ForEachPolygon([&](CPolygonPtr poly)
 	{
 		if (poly->density == 0.0f)
@@ -80,7 +77,17 @@ void	CPhysicEngine::Step(float deltaTime)
 		rot.Rotate(RAD2DEG(poly->angularVelocity * deltaTime));
 		poly->Setrotation(rot);
 		poly->Setposition(poly->Getposition() + poly->speed * deltaTime);
-		poly->speed += gravity * deltaTime;
+		//poly->speed += gravity * deltaTime;
+
+		poly->UpdateSpeed(deltaTime);
+
+		// Ground
+		if (poly->Getposition().y < -4)
+		{
+			poly->Setposition(Vec2(poly->Getposition().x, -4));
+			//poly->speed.y *= -1;
+			poly->speed.y = 0;
+		}
 	});
 
 	DetectCollisions();
@@ -114,6 +121,10 @@ void	CPhysicEngine::CollisionNarrowPhase()
 
 void CPhysicEngine::AddPolygon(CPolygonPtr polygon)
 {
+	if (polygon->invMass >= 0)
+	{
+		polygon->ApplyForce(polygon->Getposition(), gravity / polygon->invMass);
+	}
 	m_broadPhase->OnObjectAdded(polygon);
 	m_polygons.push_back(polygon);
 }

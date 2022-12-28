@@ -182,16 +182,28 @@ bool	CPolygon::IsLineIntersectingPolygon(const Line& line, Vec2& colPoint, float
 	return (minDist <= 0.0f);
 }
 
+void CPolygon::ApplyForce(const Vec2& localPoint, const Vec2& force)
+{
+	forces += force;
+	torques += Vec2::Cross(localPoint, force);
+}
+void CPolygon::UpdateSpeed(float deltaTime)
+{
+	speed += forces * (invMass * deltaTime);
+	invWorldTensor = rotation * invLocalTensor * rotation.GetInverse();
+	//angularVelocity += Mat3(invWorldTensor) * Vec3(0, 0, torques) * deltaTime;
+}
+
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
 {
-	//SeparatingAxisTest sat;
-	//return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+	SeparatingAxisTest sat;
+	return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
 	
 	//GilbertJohnsonKeerthi gjk;
 	//return gjk.CheckCollision(*this, poly);
 
-	ExpandingPolytopeAlgorithm epa;
-	return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+	//ExpandingPolytopeAlgorithm epa;
+	//return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
 }
 
 float CPolygon::GetMass() const

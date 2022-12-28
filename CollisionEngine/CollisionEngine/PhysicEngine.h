@@ -37,6 +37,9 @@ private:
 	std::vector<CPolygonPtr>    m_polygons;
 	BroadPhaseSwitcher			m_broadPhase = BroadPhaseSwitcher(m_polygons);
 
+	Vec2 gravity = Vec2(0, -9.8f);
+	float elasticity = 0.6f;
+
 public:
 	void	Reset();
 	void	Activate(bool active);

@@ -161,6 +161,74 @@ struct Vec2
 	{
 		return b * Vec2::Dot(c, a) - a * Vec2::Dot(c, b);
 	}
+
+	static float Cross(const Vec2& lhs, const Vec2& rhs)
+	{
+		return lhs.x * rhs.y - lhs.y * rhs.x;
+	}
+};
+
+struct Vec3
+{
+	float x, y, z;
+
+	Vec3() : x(0.0f), y(0.0f), z(0.0f) {}
+
+	Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+
+	static float Dot(const Vec3& lhs, const Vec3& rhs)
+	{
+		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+	}
+
+	static Vec3 Cross(const Vec3& lhs, const Vec3& rhs)
+	{
+		Vec3 result;
+		result.x = lhs.y * rhs.z - lhs.z * rhs.y;
+		result.y = lhs.z * rhs.x - lhs.x * rhs.z;
+		result.z = lhs.x * rhs.y - lhs.y * rhs.x;
+		return result;
+	}
+
+	Vec3 operator+(const Vec3& rhs) const
+	{
+		return Vec3(x + rhs.x, y + rhs.y, z + rhs.z);
+	}
+
+	Vec3 operator-() const
+	{
+		return Vec3(-x, -y, -z);
+	}
+
+	Vec3 operator-(const Vec3& rhs) const
+	{
+		return -rhs + *this;
+	}
+
+	Vec3 operator*(const float rhs) const
+	{
+		return Vec3(x * rhs, y * rhs, z * rhs);
+	}
+
+	Vec3 operator/(const float rhs) const
+	{
+		return (*this) * (1.f / rhs);
+	}
+
+	float SqrLength() const
+	{
+		return x * x + y * y + z * z;
+	}
+
+	float Length() const
+	{
+		return sqrt(SqrLength());
+	}
+
+	Vec3 GetUnit() const
+	{
+		return (*this) / Length();
+	}
 };
 
 struct Vec2Int
@@ -215,6 +283,20 @@ struct Mat2
 	Vec2 operator*(const Vec2& vec) const
 	{
 		return Vec2(X.x*vec.x + Y.x*vec.y, X.y*vec.x + Y.y*vec.y);
+	}
+};
+
+struct Mat3
+{
+	Vec3 X, Y, Z;
+
+	Mat3() : X(1.0f, 0.0f, 0.0f), Y(0.0f, 1.0f, 0.0f), Z(0.0f, 0.0f, 0.1f) {}
+
+	Mat3(const Mat2& rhs) : X(rhs.X.x, rhs.X.y, 0.0f), Y(rhs.Y.x, rhs.Y.y, 0.0f), Z(0.0f, 0.0f, 0.0f) {}
+
+	Vec3 operator*(const Vec3& vec) const
+	{
+		return Vec3(X.x * vec.x + Y.x * vec.y + Z.x * vec.z, X.y * vec.x + Y.y * vec.y + Z.y * vec.z, X.z * vec.x + Y.z * vec.y + Z.z * vec.z);
 	}
 };
 

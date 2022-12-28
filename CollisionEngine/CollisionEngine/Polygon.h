@@ -74,6 +74,13 @@ public:
 	Vec2				forces;
 	float				torques = 0.0f;
 
+	float				invMass = 1.0f / 60.0f;
+	Mat2				invWorldTensor;
+	Mat2				invLocalTensor;
+
+	void				ApplyForce(const Vec2& localPoint, const Vec2& force);
+	void				UpdateSpeed(float deltaTime);
+
 private:
 	void				CreateBuffers();
 	void				BindBuffers();
