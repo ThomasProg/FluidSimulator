@@ -108,6 +108,11 @@
     <ClInclude Include="BroadPhases\Grid.h" />
     <ClInclude Include="BroadPhases\QuadTree.h" />
     <ClInclude Include="BroadPhases\SweepAndPrune.h" />
+    <ClInclude Include="Constraints\CollisionResponse.h" />
+    <ClInclude Include="Constraints\Constraint.h" />
+    <ClInclude Include="Constraints\Friction.h" />
+    <ClInclude Include="Constraints\NoOverlap.h" />
+    <ClInclude Include="Constraints\WarmContacts.h" />
     <ClInclude Include="Conversion.h" />
     <ClInclude Include="FluidMesh.h" />
     <ClInclude Include="FluidSpawner.h" />

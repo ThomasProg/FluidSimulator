@@ -133,6 +133,11 @@ struct Vec2
 		y /= length;
 	}
 
+	bool IsNormalized() const
+	{
+		return IsNearlyEqual(GetLength(), 1.f);
+	}
+
 	Vec2	Normalized() const
 	{
 		Vec2 res = *this;

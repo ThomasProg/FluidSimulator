@@ -23,7 +23,7 @@ struct SCollision
 
 class CPhysicEngine
 {
-private:
+public:
 	friend class CPenetrationVelocitySolver;
 
 	void						CollisionBroadPhase();

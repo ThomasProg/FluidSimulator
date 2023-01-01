@@ -43,6 +43,7 @@ public:
 	std::vector<Vec2>	points;
 	std::vector<Vec2>	transformedPoints;
 
+	bool				IsStatic() { return invMass <= 0.f; }
 	void				UpdateTransformedPoints();
 
 	void				Build();
@@ -82,7 +83,10 @@ public:
 	Mat3				invWorldTensor;
 	Mat3				invLocalTensor;
 
-	void				ApplyForce(const Vec2& localPoint, const Vec2& force);
+	void				ApplyImpulse(const Vec2& point, const Vec2& impulse);
+	void				ApplyDirectImpulse(const Vec2& point, const Vec2& impulse);
+	void				ApplyForceLocal(const Vec2& localPoint, const Vec2& force);
+	void				ApplyForce(const Vec2& point, const Vec2& force);
 	void				UpdateSpeed(float deltaTime);
 
 private:

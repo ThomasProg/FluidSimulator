@@ -104,13 +104,13 @@ void	CPhysicEngine::CollisionNarrowPhase()
 {
 	m_collidingPairs.clear();
 
-	//// Helps stabilisation with gravity
-	//std::sort(m_pairsToCheck.begin(), m_pairsToCheck.end(), [](const SPolygonPair& s1, const SPolygonPair& s2)
-	//{
-	//	float scoreS1 = min(s1.GetpolyA()->Getposition().y, s1.GetpolyB()->Getposition().y);
-	//	float scoreS2 = min(s2.GetpolyA()->Getposition().y, s2.GetpolyB()->Getposition().y);
-	//	return scoreS1 < scoreS2;
-	//});
+	// Helps stabilisation with gravity
+	std::sort(m_pairsToCheck.begin(), m_pairsToCheck.end(), [](const SPolygonPair& s1, const SPolygonPair& s2)
+	{
+		float scoreS1 = min(s1.GetpolyA()->Getposition().y, s1.GetpolyB()->Getposition().y);
+		float scoreS2 = min(s2.GetpolyA()->Getposition().y, s2.GetpolyB()->Getposition().y);
+		return scoreS1 > scoreS2;
+	});
 
 	for (const SPolygonPair& pair : m_pairsToCheck)
 	{
@@ -132,7 +132,7 @@ void CPhysicEngine::AddPolygon(CPolygonPtr polygon, bool addGravity)
 {
 	if (addGravity && polygon->invMass >= 0)
 	{
-		polygon->ApplyForce(polygon->Getposition(), gravity / polygon->invMass);
+		polygon->ApplyForce(Vec2(0, 0), gravity / polygon->invMass);
 	}
 	m_broadPhase->OnObjectAdded(polygon);
 	m_polygons.push_back(polygon);

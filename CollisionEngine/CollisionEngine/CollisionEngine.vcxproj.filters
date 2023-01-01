@@ -25,6 +25,9 @@
     <Filter Include="Fichiers sources\NarrowPhases">
       <UniqueIdentifier>{de471cba-06e7-4c07-a3df-0037190003b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Constraints">
+      <UniqueIdentifier>{085a28f0-e972-4d0e-ab4d-8b2111db3a75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -170,6 +173,21 @@
     </ClInclude>
     <ClInclude Include="Behaviors\PhysicsResponse.h">
       <Filter>Fichiers sources\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\CollisionResponse.h">
+      <Filter>Fichiers sources\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\Constraint.h">
+      <Filter>Fichiers sources\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\Friction.h">
+      <Filter>Fichiers sources\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\NoOverlap.h">
+      <Filter>Fichiers sources\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\WarmContacts.h">
+      <Filter>Fichiers sources\Constraints</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

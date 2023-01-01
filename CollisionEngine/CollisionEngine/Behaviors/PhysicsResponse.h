@@ -7,6 +7,8 @@
 #include "Renderer.h"
 #include "RenderWindow.h"
 #include "World.h"
+#include "Constraints/NoOverlap.h"
+#include "Constraints/CollisionResponse.h"
 
 #define ALIAS(source, var) auto& var = source . var ;
 
@@ -14,7 +16,7 @@ class CPhysicsResponse : public CBehavior
 {
 public:
 	float restitution = 0.6f;
-	float friction = 0.5f;
+	float friction = 0.01f;
 
 	CPolygonPtr polyToSpeed;
 
@@ -28,7 +30,7 @@ public:
 		return Vec2(v.x, v.y);
 	}
 
-	float damping = 0.2f;
+	float damping = 1.0f;
 	void CorrectPosition(const SCollision& collision)
 	{
 		ALIAS(collision, polyA);
@@ -36,11 +38,8 @@ public:
 		ALIAS(collision, normal);
 		float correction = - (collision.distance * damping) / (polyA->invMass + polyB->invMass);
 		
-		//polyA->Setposition(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
-		//polyB->Setposition(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
-
-		polyA->speed += collision.normal * (polyA->invMass * correction);
-		polyB->speed -= collision.normal * (polyB->invMass * correction);
+		polyA->Setposition(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
+		polyB->Setposition(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
 	}
 
 	void ApplyFriction(const SCollision& collision, float impulse)
@@ -58,12 +57,28 @@ public:
 		float j = -tangentVelocity / (polyA->invMass + polyB->invMass);
 		j = Clamp(j, -abs(impulse) * friction, abs(impulse) * friction);
 		
+		if (!polyA->IsStatic())
 		polyA->speed += ToVec2(tangent * (j * polyA->invMass));
+		if (!polyB->IsStatic())
 		polyB->speed -= ToVec2(tangent * (j * polyB->invMass));
 	}
 
 	virtual void Update(float frameTime) override
 	{
+		//CollisionResponse colResponse;
+		//colResponse.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
+		//colResponse.RunConstraint();
+
+		auto p = gVars->pPhysicEngine->m_collidingPairs;
+		for (int i = 0; i < 5; i++)
+		{
+			NoOverlap noOverlap;
+			noOverlap.SetCollisions(p);
+			noOverlap.RunConstraint();
+		}
+
+		//return;
+
 		gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
 		{
 				//collision.polyA->Setposition(collision.polyA->Getposition() + collision.normal * collision.distance * 0.5f);
@@ -79,7 +94,10 @@ public:
 
 			auto& [polyA, polyB, point, normal, distance] = collision;
 
-			CorrectPosition(collision);
+			//if (polyA->invMass <= 0 && polyB->invMass <= 0)
+			//	return;
+
+			//CorrectPosition(collision);
 
 			Vec3 normal3D = ToVec3(normal);
 
@@ -104,7 +122,9 @@ public:
 			//collision.polyA->Setposition(collision.polyA->Getposition() - collision.polyA->speed * frameTime);
 			//collision.polyB->Setposition(collision.polyB->Getposition() - collision.polyB->speed * frameTime);
 
+			if (!polyA->IsStatic())
 			polyA->speed += normal * (j * polyA->invMass);
+			if (!polyB->IsStatic())
 			polyB->speed -= normal * (j * polyB->invMass);
 
 			ApplyFriction(collision, j);
@@ -112,9 +132,19 @@ public:
 			Vec3 angularVelocityA = momentumA * j;
 			Vec3 angularVelocityB = momentumB * j;
 
+			if (!polyA->IsStatic())
 			polyA->angularVelocity += angularVelocityA.z;
+			if (!polyB->IsStatic())
 			polyB->angularVelocity -= angularVelocityB.z;
 		});
+
+		//auto p = gVars->pPhysicEngine->m_collidingPairs;
+		//for (int i = 0; i < 5; i++)
+		//{
+		//	NoOverlap noOverlap;
+		//	noOverlap.SetCollisions(p);
+		//	noOverlap.RunConstraint();
+		//}
 
 		if (polyToSpeed != nullptr && gVars->pRenderWindow->JustPressedKey(Key::F6))
 		{
