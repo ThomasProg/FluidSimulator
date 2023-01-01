@@ -15,7 +15,7 @@ class CSweepAndPrune : public IBroadPhase
 		CPolygonPtr polygon;
 		MoveableAABB moveableAABB;
 
-	private:
+	public:
 		bool IsOverlappingOnXAxis(const PolygonData& polyData) const
 		{
 			return moveableAABB.GetmovedAABB().pMin.x < polyData.moveableAABB.GetmovedAABB().pMax.x
@@ -96,7 +96,9 @@ public:
 			return p1->GetAxisSortValueMin() < p2->GetAxisSortValueMin();
 		});
 
-		std::vector<PolygonData*> activeIntervals;
+		static std::vector<PolygonData*> activeIntervals;
+		activeIntervals.reserve(polygons.size());
+		activeIntervals.clear();
 
 		for (const std::unique_ptr<PolygonData>& poly1 : polygons)
 		{
@@ -110,7 +112,8 @@ public:
 				}
 				else
 				{
-					pairsToCheck.push_back(SPolygonPair(poly1->Getpolygon(), poly2->Getpolygon()));
+					if (poly1->IsOverlappingOnYAxis(*poly2))
+						pairsToCheck.push_back(SPolygonPair(poly1->Getpolygon(), poly2->Getpolygon()));
 					it++;
 				}
 			}
