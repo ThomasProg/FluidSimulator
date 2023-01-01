@@ -43,6 +43,7 @@ public:
 		if (gVars->bDebug)
 			DisplayDebug();
 
+		pairsToCheck.reserve(polygonsRef.size() * polygonsRef.size());
 		for (size_t i = 0; i < polygonsRef.size(); ++i)
 		{
 			const SHAPE& c1 = boundingVolumes[polygonsRef[i]];

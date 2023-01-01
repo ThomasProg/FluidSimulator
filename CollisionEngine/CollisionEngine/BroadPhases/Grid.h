@@ -109,7 +109,7 @@ public:
             DisplayDebug();
 
         pairsToCheck.reserve(pairsToCheck.size());
-        for (auto it : this->pairsToCheck)
+        for (const auto& it : this->pairsToCheck)
         {
             pairsToCheck.emplace_back(it.first);
         }
@@ -226,6 +226,9 @@ public:
         }
     }
 
+    std::unordered_set<Vec2Int> toAdd;
+    std::unordered_set<Vec2Int> toRemove;
+
     // Can be optimized
     void OnObjectUpdated(const CPolygonPtr& polygon) 
     {
@@ -238,8 +241,11 @@ public:
 
         // TODO : better opti
 
-        std::unordered_set<Vec2Int> toAdd;
-        std::unordered_set<Vec2Int> toRemove;
+        toAdd.clear();
+        toRemove.clear();
+        int reserved = (oldAABBInt.pMax.y - oldAABBInt.pMin.y) * (oldAABBInt.pMax.x - oldAABBInt.pMin.x);
+        toAdd.reserve(reserved);
+        toRemove.reserve(reserved);
 
         for (int gridX = oldAABBInt.pMin.x; gridX <= oldAABBInt.pMax.x; gridX++)
         {

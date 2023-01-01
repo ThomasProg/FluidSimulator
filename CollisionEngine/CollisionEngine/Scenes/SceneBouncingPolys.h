@@ -4,6 +4,7 @@
 #include "BaseScene.h"
 
 #include "Behaviors/SimplePolygonBounce.h"
+#include "Behaviors/PhysicsResponse.h"
 
 class CSceneBouncingPolys : public CBaseScene
 {
@@ -34,9 +35,12 @@ protected:
 		for (size_t i = 0; i < m_polyCount; ++i)
 		{
 			CPolygonPtr poly = gVars->pWorld->AddRandomPoly(params);
-			poly->density = 0.0f;
-			gVars->pPhysicEngine->AddPolygon(poly);
+			poly->density = 1.0f;
+			poly->invMass = 1.f / 5.f;
+			gVars->pPhysicEngine->AddPolygon(poly, false);
 		}
+
+		CBehaviorPtr b = gVars->pWorld->AddBehavior<CPhysicsResponse>(nullptr);
 	}
 
 private:

@@ -21,13 +21,15 @@ private:
 		{
 			m_broadPhase.Reset();
 
-			CPolygonPtr firstPoly = gVars->pWorld->AddTriangle(15.0f, 15.0f);
+			//CPolygonPtr firstPoly = gVars->pWorld->AddTriangle(15.0f, 15.0f);
+			CPolygonPtr firstPoly = gVars->pWorld->AddSquare(15.f);
 			firstPoly->density = 0.0f;
 			firstPoly->Setposition(Vec2(-5.0f, -5.0f));
 			firstPoly->Build();
 			AddPolygon(firstPoly);
 
-			CPolygonPtr secondPoly = gVars->pWorld->AddTriangle(12.5f, 10.0f);
+			//CPolygonPtr secondPoly = gVars->pWorld->AddTriangle(12.5f, 10.0f);
+			CPolygonPtr secondPoly = gVars->pWorld->AddSquare(15.f);
 			secondPoly->Setposition(Vec2(5.0f, 5.0f));
 			secondPoly->density = 0.0f;
 			AddPolygon(secondPoly);

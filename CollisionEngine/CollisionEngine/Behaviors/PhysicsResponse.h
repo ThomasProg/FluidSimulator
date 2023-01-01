@@ -8,10 +8,12 @@
 #include "RenderWindow.h"
 #include "World.h"
 
+#define ALIAS(source, var) auto& var = source . var ;
+
 class CPhysicsResponse : public CBehavior
 {
 public:
-	float restitution = 0.f;
+	float restitution = 0.6f;
 	float friction = 0.5f;
 
 	CPolygonPtr polyToSpeed;
@@ -26,6 +28,20 @@ public:
 		return Vec2(v.x, v.y);
 	}
 
+	float damping = 0.2f;
+	void CorrectPosition(const SCollision& collision)
+	{
+		ALIAS(collision, polyA);
+		ALIAS(collision, polyB);
+		ALIAS(collision, normal);
+		float correction = - (collision.distance * damping) / (polyA->invMass + polyB->invMass);
+		
+		//polyA->Setposition(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
+		//polyB->Setposition(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
+
+		polyA->speed += collision.normal * (polyA->invMass * correction);
+		polyB->speed -= collision.normal * (polyB->invMass * correction);
+	}
 
 	void ApplyFriction(const SCollision& collision, float impulse)
 	{
@@ -63,6 +79,8 @@ public:
 
 			auto& [polyA, polyB, point, normal, distance] = collision;
 
+			CorrectPosition(collision);
+
 			Vec3 normal3D = ToVec3(normal);
 
 			Vec3 rA = ToVec3(point - polyA->Getposition());
@@ -70,8 +88,8 @@ public:
 			Vec3 vAi = ToVec3(polyA->speed) + Vec3::Cross(Vec3(0, 0, polyA->angularVelocity), rA);
 			Vec3 vBi = ToVec3(polyB->speed) + Vec3::Cross(Vec3(0,0,polyB->angularVelocity), rB);
 
-			Vec3 momentumA = Vec3(0,0,0);//Mat3(polyA->invWorldTensor) * Vec3::Cross(rA, normal3D);
-			Vec3 momentumB = Vec3(0,0,0);//Mat3(polyB->invWorldTensor) * Vec3::Cross(rB, normal3D);
+			Vec3 momentumA = polyA->invWorldTensor * Vec3::Cross(rA, normal3D);
+			Vec3 momentumB = polyB->invWorldTensor * Vec3::Cross(rB, normal3D);
 
 			float weightRotA = Vec3::Dot(Vec3::Cross(momentumA, rA), normal3D);
 			float weightRotB = Vec3::Dot(Vec3::Cross(momentumB, rB), normal3D);

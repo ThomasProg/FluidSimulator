@@ -9,10 +9,10 @@
 
 BroadPhaseSwitcher::BroadPhaseSwitcher(std::vector<CPolygonPtr>& polygons) : m_polygons(polygons)
 {
-	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CGrid>(1); });
-	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CCircleToCircle>(polygons); });
 	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CAABBToAABB>(polygons); });
+	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CGrid>(1); });
 	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CSweepAndPrune>(); });
+	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CCircleToCircle>(polygons); });
 	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CQuadTree>(); });
 	broadPhasesGetters.emplace_back([&polygons]() -> std::unique_ptr<IBroadPhase> { return std::make_unique<CBroadPhaseBrut>(polygons); });
 }

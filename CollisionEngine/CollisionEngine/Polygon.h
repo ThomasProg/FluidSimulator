@@ -73,10 +73,14 @@ public:
 	float				angularVelocity = 0.0f;
 	Vec2				forces;
 	float				torques = 0.0f;
+	//Vec3				forces;
+	//Vec3				torques;
 
 	float				invMass = 1.0f / 60.0f;
-	Mat2				invWorldTensor;
-	Mat2				invLocalTensor;
+	//Mat2				invWorldTensor;
+	//Mat2				invLocalTensor;
+	Mat3				invWorldTensor;
+	Mat3				invLocalTensor;
 
 	void				ApplyForce(const Vec2& localPoint, const Vec2& force);
 	void				UpdateSpeed(float deltaTime);

@@ -81,13 +81,13 @@ void	CPhysicEngine::Step(float deltaTime)
 
 		poly->UpdateSpeed(deltaTime);
 
-		// Ground
-		if (poly->Getposition().y < -4)
-		{
-			poly->Setposition(Vec2(poly->Getposition().x, -4));
-			//poly->speed.y *= -1;
-			poly->speed.y = 0;
-		}
+		//// Ground
+		//if (poly->Getposition().y < -4)
+		//{
+		//	poly->Setposition(Vec2(poly->Getposition().x, -4));
+		//	//poly->speed.y *= -1;
+		//	poly->speed.y = 0;
+		//}
 	});
 
 	DetectCollisions();
@@ -103,6 +103,15 @@ void	CPhysicEngine::CollisionBroadPhase()
 void	CPhysicEngine::CollisionNarrowPhase()
 {
 	m_collidingPairs.clear();
+
+	//// Helps stabilisation with gravity
+	//std::sort(m_pairsToCheck.begin(), m_pairsToCheck.end(), [](const SPolygonPair& s1, const SPolygonPair& s2)
+	//{
+	//	float scoreS1 = min(s1.GetpolyA()->Getposition().y, s1.GetpolyB()->Getposition().y);
+	//	float scoreS2 = min(s2.GetpolyA()->Getposition().y, s2.GetpolyB()->Getposition().y);
+	//	return scoreS1 < scoreS2;
+	//});
+
 	for (const SPolygonPair& pair : m_pairsToCheck)
 	{
 		SCollision collision;
@@ -119,9 +128,9 @@ void	CPhysicEngine::CollisionNarrowPhase()
 	}
 }
 
-void CPhysicEngine::AddPolygon(CPolygonPtr polygon)
+void CPhysicEngine::AddPolygon(CPolygonPtr polygon, bool addGravity)
 {
-	if (polygon->invMass >= 0)
+	if (addGravity && polygon->invMass >= 0)
 	{
 		polygon->ApplyForce(polygon->Getposition(), gravity / polygon->invMass);
 	}

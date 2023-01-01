@@ -32,6 +32,17 @@ private:
 			CPolygonPtr poly = gVars->pWorld->AddRandomPoly(params);
 			gVars->pPhysicEngine->AddPolygon(poly);
 		}
+
+		{
+			CPolygonPtr block = gVars->pWorld->AddRectangle(1 * 130.0f, 1.0f);
+			block->Setposition(Vec2(0.0f, -8.0f * 1.0f));
+			block->density = 0.0f;
+			block->invMass = 0.0f;
+			block->invWorldTensor = block->invLocalTensor = Mat3::Zero();
+			gVars->pPhysicEngine->AddPolygon(block);
+		}
+
+		gVars->pWorld->AddBehavior<CPhysicsResponse>(nullptr);
 	}
 
 private:

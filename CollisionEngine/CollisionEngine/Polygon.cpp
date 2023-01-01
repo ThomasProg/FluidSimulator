@@ -190,20 +190,38 @@ void CPolygon::ApplyForce(const Vec2& localPoint, const Vec2& force)
 void CPolygon::UpdateSpeed(float deltaTime)
 {
 	speed += forces * (invMass * deltaTime);
-	invWorldTensor = rotation * invLocalTensor * rotation.GetInverse();
+	invWorldTensor = Mat3(rotation) * invLocalTensor * Mat3(rotation.GetInverse());
 	//angularVelocity += Mat3(invWorldTensor) * Vec3(0, 0, torques) * deltaTime;
 }
 
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
 {
-	SeparatingAxisTest sat;
-	return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
-	
+	//SeparatingAxisTest sat;
+	//return sat.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+
 	//GilbertJohnsonKeerthi gjk;
 	//return gjk.CheckCollision(*this, poly);
 
 	//ExpandingPolytopeAlgorithm epa;
 	//return epa.CheckCollision(*this, poly, colPoint, colNormal, colDist);
+
+	SeparatingAxisTest sat;
+	Vec2 colPoint2; Vec2 colNormal2; float colDist2;
+	if (sat.CheckCollision(*this, poly, colPoint, colNormal, colDist))
+	{
+		ExpandingPolytopeAlgorithm epa;
+		if (epa.CheckCollision(*this, poly, colPoint2, colNormal2, colDist2))
+		{
+			if (!(IsNearlyEqual(colNormal2, colNormal) && IsNearlyEqual(colDist2, colDist)))
+			{
+				int i = 4;
+				i += 5;
+			}
+
+			return true;
+		}
+	}
+	return false;
 }
 
 float CPolygon::GetMass() const

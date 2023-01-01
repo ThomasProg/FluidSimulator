@@ -57,7 +57,7 @@ public:
 		}
 	}
 
-	void AddPolygon(CPolygonPtr polygon);
+	void AddPolygon(CPolygonPtr polygon, bool addGravity = true);
 	void RemovePolygon(CPolygonPtr polygon);
 	void SetBroadPhase(std::unique_ptr<IBroadPhase>&& broadPhase);
 	void NextBroadPhase()

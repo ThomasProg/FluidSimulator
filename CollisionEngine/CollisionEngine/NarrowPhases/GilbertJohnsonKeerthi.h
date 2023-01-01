@@ -25,7 +25,7 @@ struct SimplexBuilder
 
 		// Try to make a triangle on AB side
 		Vec2 nAB = Vec2::TripleProduct(ac, ab, ab);
-		if (Vec2::Dot(nAB, ap) > 0)
+		if (Vec2::Dot(nAB, ap) > 0.000001f)
 		{
 			p1 = a;
 			p2 = b;
@@ -35,7 +35,7 @@ struct SimplexBuilder
 
 		// Try to make a triangle on AC side
 		Vec2 nAC = Vec2::TripleProduct(ab, ac, ac);
-		if (Vec2::Dot(nAC, ap) > 0)
+		if (Vec2::Dot(nAC, ap) > 0.000001f)
 		{
 			p1 = a;
 			p2 = c;

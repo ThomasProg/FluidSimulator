@@ -6,6 +6,7 @@
 #undef max
 #define out
 
+
 class SeparatingAxisTest
 {
 public:
@@ -55,20 +56,15 @@ public:
 		allAxis.reserve(poly1.transformedPoints.size() + poly2.transformedPoints.size());
 		
 		GetAllNormals(poly2, out allAxis);
-		for (Vec2& axis : allAxis)
-		{
-			axis *= -1;
-		}
-		int poly1StartID = allAxis.size();
 		GetAllNormals(poly1, out allAxis);
 		
 		float smallestOverlap = std::numeric_limits<float>::max();
 		Vec2 axisWithSmallestOverlap;
 
-		for (int i = 0; i < allAxis.size(); i++)
-		//for (Vec2 axis : allAxis)
+		for (Vec2 axis : allAxis)
 		{
-			Vec2 axis = allAxis[i];
+			axis.Normalize();
+
 			Vec2 minPoint1;
 			Vec2 maxPoint1;
 			float minp1, maxp1;
@@ -90,30 +86,67 @@ public:
 				float overlap = minMaxProj - maxMinProj;
 				if (overlap < smallestOverlap)
 				{
-					Vec2 collisionPoint;
-					if (i < poly1StartID)
-					{
-						collisionPoint = maxPoint1;
-					}
-					else
-					{
-						collisionPoint = minPoint2;
-					}
-
 					// To prevent bugs when multiple edges with the same normal axis exist
-					float v = Vec2::Dot(collisionPoint, axis);
-					if (v <= minMaxProj && v >= maxMinProj)
-					{
-						smallestOverlap = overlap;
-						axisWithSmallestOverlap = axis;
-						colPoint = collisionPoint;
-					}
+					float v = Vec2::Dot(poly1.Getposition() - poly2.Getposition(), axis);
+					if (v > 0)
+						axis *= -1;
+
+					smallestOverlap = overlap;
+					axisWithSmallestOverlap = axis;
 				}
 			}
 		}
 
 		colDist = smallestOverlap;
 		colNormal = axisWithSmallestOverlap.Normalized();
+
+		std::vector<Vec2> outPointsPoly1;
+		GetFarthestPoinstInDirection(poly1.transformedPoints, colNormal, outPointsPoly1);
+
+		std::vector<Vec2> outPointsPoly2;
+		GetFarthestPoinstInDirection(poly2.transformedPoints, -colNormal, outPointsPoly2);
+
+		if (outPointsPoly1.size() == 1)
+		{
+			colPoint = outPointsPoly1[0];
+		}
+		else if (outPointsPoly2.size() == 1)
+		{
+			colPoint = outPointsPoly2[0] + colNormal * colDist;
+		}
+		else // if 2 edges are colliding
+		{
+			Vec2 n = colNormal.GetNormal();
+
+			Vec2 minPoint1n;
+			Vec2 maxPoint1n;
+			float minp1n, maxp1n;
+			ProjectPolygonOnAxis(poly1, n, minp1n, maxp1n, minPoint1n, maxPoint1n);
+
+			Vec2 minPoint2n;
+			Vec2 maxPoint2n;
+			float minp2n, maxp2n;
+			ProjectPolygonOnAxis(poly2, n, minp2n, maxp2n, minPoint2n, maxPoint2n);
+
+			Vec2 minPoint1;
+			Vec2 maxPoint1;
+			float minp1, maxp1;
+			ProjectPolygonOnAxis(poly1, colNormal, minp1, maxp1, minPoint1, maxPoint1);
+
+			Vec2 minPoint2;
+			Vec2 maxPoint2;
+			float minp2, maxp2;
+			ProjectPolygonOnAxis(poly2, colNormal, minp2, maxp2, minPoint2, maxPoint2);
+
+			float minMaxProjn = Min(maxp1n, maxp2n);
+			float maxMinProjn = Max(minp1n, minp2n);
+			float middlen = maxMinProjn + (minMaxProjn - maxMinProjn) / 2;
+
+			float minMaxProj = Min(maxp1, maxp2);
+			float maxMinProj = Max(minp1, minp2);
+			float middle = maxMinProj + (minMaxProj - maxMinProj) / 2;
+			colPoint = n * middlen + colNormal * middle;
+		}
 
 		return true;
 	}

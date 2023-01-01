@@ -36,6 +36,11 @@ T Clamp(T val, T min, T max)
 	return Min(Max(val, min), max);
 }
 
+inline bool IsNearlyEqual(float lhs, float rhs, float precision = 0.00001)
+{
+	return abs(lhs - rhs) < precision;
+}
+
 float Sign(float a);
 
 float Random(float from, float to);
@@ -168,6 +173,11 @@ struct Vec2
 	}
 };
 
+inline bool IsNearlyEqual(Vec2 lhs, Vec2 rhs, float precision = 0.00001)
+{
+	return IsNearlyEqual(lhs.x, rhs.x) && IsNearlyEqual(lhs.y, rhs.y);
+}
+
 struct Vec3
 {
 	float x, y, z;
@@ -193,6 +203,12 @@ struct Vec3
 	Vec3 operator+(const Vec3& rhs) const
 	{
 		return Vec3(x + rhs.x, y + rhs.y, z + rhs.z);
+	}
+
+	Vec3& operator*=(float rhs)
+	{
+		(*this) = (*this) * rhs;
+		return *this;
 	}
 
 	Vec3 operator-() const
@@ -230,6 +246,11 @@ struct Vec3
 		return (*this) / Length();
 	}
 };
+
+inline bool IsNearlyEqual(Vec3 lhs, Vec3 rhs, float precision = 0.00001)
+{
+	return IsNearlyEqual(lhs.x, rhs.x) && IsNearlyEqual(lhs.y, rhs.y) && IsNearlyEqual(lhs.z, rhs.z);
+}
 
 struct Vec2Int
 {
@@ -292,11 +313,57 @@ struct Mat3
 
 	Mat3() : X(1.0f, 0.0f, 0.0f), Y(0.0f, 1.0f, 0.0f), Z(0.0f, 0.0f, 0.1f) {}
 
-	Mat3(const Mat2& rhs) : X(rhs.X.x, rhs.X.y, 0.0f), Y(rhs.Y.x, rhs.Y.y, 0.0f), Z(0.0f, 0.0f, 0.0f) {}
+	Mat3(const Mat2& rhs) : X(rhs.X.x, rhs.X.y, 0.0f), Y(rhs.Y.x, rhs.Y.y, 0.0f), Z(0.0f, 0.0f, 1.0f) {}
 
 	Vec3 operator*(const Vec3& vec) const
 	{
 		return Vec3(X.x * vec.x + Y.x * vec.y + Z.x * vec.z, X.y * vec.x + Y.y * vec.y + Z.y * vec.z, X.z * vec.x + Y.z * vec.y + Z.z * vec.z);
+	}
+
+	Mat3 operator*(const Mat3& rhs) const
+	{
+		Mat3 m;
+
+		m.X.x = X.x * rhs.X.x + X.y * rhs.Y.x + X.z * rhs.Z.x;
+		m.X.y = X.x * rhs.X.y + X.y * rhs.Y.y + X.z * rhs.Z.y;
+		m.X.z = X.x * rhs.X.z + X.y * rhs.Y.z + X.z * rhs.Z.z;
+
+		m.Y.x = Y.x * rhs.X.x + Y.y * rhs.Y.x + Y.z * rhs.Z.x;
+		m.Y.y = Y.x * rhs.X.y + Y.y * rhs.Y.y + Y.z * rhs.Z.y;
+		m.Y.z = Y.x * rhs.X.z + Y.y * rhs.Y.z + Y.z * rhs.Z.z;
+
+		m.Z.x = Z.x * rhs.X.x + Z.y * rhs.Y.x + Z.z * rhs.Z.x;
+		m.Z.y = Z.x * rhs.X.y + Z.y * rhs.Y.y + Z.z * rhs.Z.y;
+		m.Z.z = Z.x * rhs.X.z + Z.y * rhs.Y.z + Z.z * rhs.Z.z;
+
+		return m;
+	}
+
+	Mat3 operator*(float rhs) const
+	{
+		Mat3 m = (*this);
+		m.X *= rhs;
+		m.Y *= rhs;
+		m.Z *= rhs;
+		return m;
+	}
+
+	static Mat3 Zero()
+	{
+		Mat3 m;
+		m.X = Vec3(0,0,0);
+		m.Y = Vec3(0, 0, 0);
+		m.Z = Vec3(0, 0, 0);
+		return m;
+	}
+
+	static Mat3 Identity()
+	{
+		Mat3 m;
+		m.X = Vec3(1, 0, 0);
+		m.Y = Vec3(0, 1, 0);
+		m.Z = Vec3(0, 0, 1);
+		return m;
 	}
 };
 
@@ -443,6 +510,27 @@ public:
 		movedAABB.Translate(newPos);
 	}
 };
+
+inline void GetFarthestPoinstInDirection(const std::vector<Vec2>& points, Vec2::TConstArg direction, std::vector<Vec2>& outPoints)
+{
+	assert(points.size() != 0);
+	float projMax = std::numeric_limits<float>::lowest();
+	Vec2 pointWithProjMax;
+	for (auto it = points.begin(); it != points.end(); it++)
+	{
+		float proj = Vec2::Dot(*it, direction);
+		if (proj > projMax)
+		{
+			outPoints.clear();
+			outPoints.push_back(*it);
+			projMax = proj;
+		}
+		else if (IsNearlyEqual(proj, projMax, 0.001))
+		{
+			outPoints.push_back(*it);
+		}
+	}
+}
 
 template<typename CONTAINER>
 Vec2 GetFarthestPointInDirection(const CONTAINER& container, Vec2::TConstArg direction)

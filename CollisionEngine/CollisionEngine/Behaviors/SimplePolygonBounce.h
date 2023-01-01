@@ -12,14 +12,14 @@ class CSimplePolygonBounce : public CBehavior
 private:
 	virtual void Update(float frameTime) override
 	{
-		gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
-		{
-			collision.polyA->Setposition(collision.polyA->Getposition() + collision.normal * collision.distance * -0.5f);
-			collision.polyB->Setposition(collision.polyB->Getposition() + collision.normal * collision.distance * 0.5f);
+		//gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
+		//{
+		//	collision.polyA->Setposition(collision.polyA->Getposition() + collision.normal * collision.distance * -0.5f);
+		//	collision.polyB->Setposition(collision.polyB->Getposition() + collision.normal * collision.distance * 0.5f);
 
-			collision.polyA->speed.Reflect(collision.normal);
-			collision.polyB->speed.Reflect(collision.normal);
-		});
+		//	collision.polyA->speed.Reflect(collision.normal);
+		//	collision.polyB->speed.Reflect(collision.normal);
+		//});
 
 		float hWidth = gVars->pRenderer->GetWorldWidth() * 0.5f;
 		float hHeight = gVars->pRenderer->GetWorldHeight() * 0.5f;
