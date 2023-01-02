@@ -89,12 +89,12 @@ public:
 				// so it is not that bad
 
 				std::vector<Vec2>::const_iterator nextIt1 = farthestIt1 + 1;
-				if (nextIt1 == poly1.transformedPoints.cend())
-					nextIt1 = poly1.transformedPoints.cbegin();
+				if (nextIt1 == poly1.GetWorldPoints().cend())
+					nextIt1 = poly1.GetWorldPoints().cbegin();
 
 				std::vector<Vec2>::const_iterator prevIt1 = farthestIt1;
-				if (prevIt1 == poly1.transformedPoints.cbegin())
-					prevIt1 = poly1.transformedPoints.cend() - 1;
+				if (prevIt1 == poly1.GetWorldPoints().cbegin())
+					prevIt1 = poly1.GetWorldPoints().cend() - 1;
 				else
 					prevIt1--;
 

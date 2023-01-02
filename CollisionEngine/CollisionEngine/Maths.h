@@ -12,6 +12,8 @@
 #define RAD2DEG(x) ((x)*(180.0f/(float)M_PI))
 #define DEG2RAD(x) ((x)*((float)M_PI/180.0f))
 
+#define USING_THREADS false
+
 template<typename T>
 T Select(bool condition, T a, T b)
 {
@@ -177,6 +179,11 @@ struct Vec2
 		return lhs.x * rhs.y - lhs.y * rhs.x;
 	}
 };
+
+inline Vec2 GetNormalBetween2Points(Vec2 p1, Vec2 p2)
+{
+	return (p1 - p2).GetNormal().Normalized();
+}
 
 inline bool IsNearlyEqual(Vec2 lhs, Vec2 rhs, float precision = 0.00001)
 {
@@ -513,6 +520,11 @@ public:
 		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMin.x, baseAABB.pMax.y)));
 		movedAABB.EnlargeWithPoint(Vec2(rotation * Vec2(baseAABB.pMax.x, baseAABB.pMin.y)));
 		movedAABB.Translate(newPos);
+	}
+
+	void SetMovedAABB(const AABB& newMovedAABB)
+	{
+		movedAABB = newMovedAABB;
 	}
 };
 

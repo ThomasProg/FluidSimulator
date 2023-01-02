@@ -144,9 +144,16 @@ void CRenderer::Update()
 
 	float frameTime = UpdateFrameTime();
 	DrawFPS(frameTime);
+	m_totalTime += frameTime;
+
+	//while (m_totalPhysicTime < m_totalTime - frameTime / 2)
+	//{
+	//	gVars->pPhysicEngine->Step(m_physicFPS);
+	//	UpdateWorld(m_physicFPS);
+	//	m_totalPhysicTime += m_physicFPS;
+	//}
 
 	gVars->pPhysicEngine->Step(frameTime);
-	
 	timer.Start();
 	UpdateWorld(frameTime);
 	timer.Stop(); 

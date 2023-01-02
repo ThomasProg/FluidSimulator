@@ -33,11 +33,15 @@ public:
 
 				float correction = -(collision.distance * steering) / (polyA->invMass + polyB->invMass);
 
-				polyA->Setposition(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
-				polyB->Setposition(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
+				if (!polyA->IsStatic())
+				{
+					polyA->SetPositionUnsafe(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
 
-				polyA->UpdateTransformedPoints();
-				polyB->UpdateTransformedPoints();
+				}
+				if (!polyB->IsStatic())
+				{
+					polyB->SetPositionUnsafe(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
+				}
 			}
 		}
 	}

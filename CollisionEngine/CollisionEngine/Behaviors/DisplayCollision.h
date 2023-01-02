@@ -25,8 +25,6 @@ private:
 
 		Vec2 point, normal;
 		float dist;
-		polyA->UpdateTransformedPoints();
-		polyB->UpdateTransformedPoints();
 		if (polyA->CheckCollision(*polyB, point, normal, dist))
 		{
 			gVars->pRenderer->DisplayTextWorld("collision point", point);

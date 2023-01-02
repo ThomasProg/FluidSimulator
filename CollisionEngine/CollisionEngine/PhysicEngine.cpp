@@ -75,9 +75,7 @@ void	CPhysicEngine::Step(float deltaTime)
 		
 		Mat2 rot = poly->Getrotation();
 		rot.Rotate(RAD2DEG(poly->angularVelocity * deltaTime));
-		poly->Setrotation(rot);
-		poly->Setposition(poly->Getposition() + poly->speed * deltaTime);
-		//poly->speed += gravity * deltaTime;
+		poly->SetTransform(poly->Getposition() + poly->speed * deltaTime, rot);
 
 		poly->UpdateSpeed(deltaTime);
 
@@ -104,21 +102,19 @@ void	CPhysicEngine::CollisionNarrowPhase()
 {
 	m_collidingPairs.clear();
 
-	// Helps stabilisation with gravity
-	std::sort(m_pairsToCheck.begin(), m_pairsToCheck.end(), [](const SPolygonPair& s1, const SPolygonPair& s2)
-	{
-		float scoreS1 = min(s1.GetpolyA()->Getposition().y, s1.GetpolyB()->Getposition().y);
-		float scoreS2 = min(s2.GetpolyA()->Getposition().y, s2.GetpolyB()->Getposition().y);
-		return scoreS1 > scoreS2;
-	});
+	//// Helps stabilisation with gravity
+	//std::sort(m_pairsToCheck.begin(), m_pairsToCheck.end(), [](const SPolygonPair& s1, const SPolygonPair& s2)
+	//{
+	//	float scoreS1 = min(s1.GetpolyA()->Getposition().y, s1.GetpolyB()->Getposition().y);
+	//	float scoreS2 = min(s2.GetpolyA()->Getposition().y, s2.GetpolyB()->Getposition().y);
+	//	return scoreS1 > scoreS2;
+	//});
 
 	for (const SPolygonPair& pair : m_pairsToCheck)
 	{
 		SCollision collision;
 		collision.polyA = pair.GetpolyA();
 		collision.polyB = pair.GetpolyB();
-		collision.polyA->UpdateTransformedPoints();
-		collision.polyB->UpdateTransformedPoints();
 		if (pair.GetpolyA()->CheckCollision(*(pair.GetpolyB()), collision.point, collision.normal, collision.distance)) 
 		{
 			m_collidingPairs.push_back(collision);

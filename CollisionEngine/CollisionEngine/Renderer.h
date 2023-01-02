@@ -72,6 +72,9 @@ private:
 
 	float	m_lastFPS;
 	float	m_lastFPSSince;
+	float	m_totalTime = 0.f;
+	float	m_totalPhysicTime = 0.f;
+	float	m_physicFPS = 1.f / 300.f;
 	FPS		m_FPS;
 };
 

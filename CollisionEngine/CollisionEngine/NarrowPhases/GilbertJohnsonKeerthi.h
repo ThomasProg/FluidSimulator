@@ -60,16 +60,16 @@ public:
 
 	static Vec2 Support(const CPolygon& poly1, const CPolygon& poly2, const Vec2& direction, std::vector<Vec2>::const_iterator& farthestP1, std::vector<Vec2>::const_iterator& farthestP2)
 	{
-		farthestP1 = GetFarthestPointItInDirectionWithConvexShape(poly1.transformedPoints, direction);
-		farthestP2 = GetFarthestPointItInDirectionWithConvexShape(poly2.transformedPoints, -direction);
+		farthestP1 = GetFarthestPointItInDirectionWithConvexShape(poly1.GetWorldPoints(), direction);
+		farthestP2 = GetFarthestPointItInDirectionWithConvexShape(poly2.GetWorldPoints(), -direction);
 
 		return *farthestP1 - *farthestP2;
 	}
 
 	static Vec2 Support(const CPolygon& poly1, const CPolygon& poly2, const Vec2& direction)
 	{
-		Vec2 p1 = GetFarthestPointInDirectionWithConvexShape(poly1.transformedPoints, direction);
-		Vec2 p2 = GetFarthestPointInDirectionWithConvexShape(poly2.transformedPoints, -direction);
+		Vec2 p1 = GetFarthestPointInDirectionWithConvexShape(poly1.GetWorldPoints(), direction);
+		Vec2 p2 = GetFarthestPointInDirectionWithConvexShape(poly2.GetWorldPoints(), -direction);
 		
 		return p1 - p2;
 	}

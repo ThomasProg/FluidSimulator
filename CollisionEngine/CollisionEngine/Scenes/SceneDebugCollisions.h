@@ -61,8 +61,6 @@ private:
 				SCollision collision;
 				collision.polyA = pair.GetpolyA();
 				collision.polyB = pair.GetpolyB();
-				collision.polyA->UpdateTransformedPoints();
-				collision.polyB->UpdateTransformedPoints();
 				if (pair.GetpolyA()->CheckCollision(*(pair.GetpolyB()), collision.point, collision.normal, collision.distance))
 				{
 					collisions.push_back(collision);

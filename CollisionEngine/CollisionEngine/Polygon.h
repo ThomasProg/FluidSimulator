@@ -29,22 +29,61 @@ private:
 	Vec2				position;
 	Mat2				rotation;
 
+	bool worldNormalsDirty = true; 
+	std::vector<Vec2>	worldNormals;
+	void				UpdateWorldNormals();
+
+	std::vector<Vec2>	transformedPoints;
+	bool transformedPointsDirty = true;
+	void					 UpdateTransformedPoints();
+
 public:
+	const std::vector<Vec2>& GetWorldNormals() const;
+	const std::vector<Vec2>& GetWorldPoints() const;
+
 	CollisionState collisionState = CollisionState::NOT_COLLIDING;
 
 	std::function<void(const CPolygon&)> onTransformUpdatedCallback;
 
 	GETTER(position)
-	SETTER(position, OnTransformUpdated)
+	//SETTER(position, OnTransformUpdated)
+	void Setposition(Vec2 newPos);
+
+	// You have to call OnTransformUpdated() after calling this function
+	void SetPositionUnsafe(Vec2 newPos)
+	{
+		position = newPos;
+		transformedPointsDirty = true;
+		worldNormalsDirty = true;
+	}
 
 	GETTER(rotation)
-	SETTER(rotation, OnTransformUpdated)
+	//SETTER(rotation, OnTransformUpdated)
+
+	void SetRotationUnsafe(const Mat2& newRot)
+	{
+		rotation = newRot;
+		transformedPointsDirty = true;
+		worldNormalsDirty = true;
+	}
+
+	void Setrotation(const Mat2& newRot)
+	{
+		SetRotationUnsafe(newRot);
+		OnTransformUpdated();
+	}
+
+	void SetTransform(Vec2 newPos, const Mat2& newRot)
+	{
+		SetPositionUnsafe(newPos);
+		SetRotationUnsafe(newRot);
+		OnTransformUpdated();
+	}
 
 	std::vector<Vec2>	points;
-	std::vector<Vec2>	transformedPoints;
 
 	bool				IsStatic() { return invMass <= 0.f; }
-	void				UpdateTransformedPoints();
+	void				GetAllNormals(std::vector<Vec2>& outNormals) const;
 
 	void				Build();
 	void				Draw();

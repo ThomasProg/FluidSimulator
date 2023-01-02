@@ -2,14 +2,15 @@
 
 #include "Polygon.h"
 
-inline AABB PolyToBaseAABB(const CPolygonPtr& poly)
+inline AABB PointsToBaseAABB(const std::vector<Vec2>& points)
 {
-	if (poly->points.size() == 0)
+	// TODO : asssert instead?
+	if (points.size() == 0)
 		return AABB();
 
-	AABB baseAABB = AABB(poly->points[0], poly->points[0]);
+	AABB baseAABB = AABB(points[0], points[0]);
 
-	for (const Vec2& p : poly->points)
+	for (const Vec2& p : points)
 	{
 		// TODO : remove first iteration?
 		baseAABB.pMin.x = Min(baseAABB.pMin.x, p.x);
@@ -19,6 +20,11 @@ inline AABB PolyToBaseAABB(const CPolygonPtr& poly)
 	}
 
 	return baseAABB;
+}
+
+inline AABB PolyToBaseAABB(const CPolygonPtr& poly)
+{
+	return PointsToBaseAABB(poly->points);
 }
 
 inline AABB TransformAABB(AABB baseAABB, const Vec2& pos, const Mat2& rot)
@@ -36,7 +42,12 @@ inline AABB PolyToTransformedAABB(const CPolygonPtr& poly, AABB baseAABB)
 
 inline void UpdateAABBTransformFromPolygon(MoveableAABB& aabb, const CPolygon& poly)
 {
-	aabb.SetTransform(poly.Getposition(), poly.Getrotation());
+	// arbitrary number
+	int nbPointsToOpti = 8;
+	if (poly.points.size() > nbPointsToOpti)
+		aabb.SetTransform(poly.Getposition(), poly.Getrotation());
+	else
+		aabb.SetMovedAABB(PointsToBaseAABB(poly.GetWorldPoints()));
 }
 
 inline MoveableAABB PolyToMoveableAABB(const CPolygonPtr& poly)

@@ -4,35 +4,19 @@
 #include <cassert>
 
 #undef max
-#define out
 
 class SeparatingAxisTest
 {
 public:
-	static Vec2 GetNormalBetween2Points(Vec2 p1, Vec2 p2) 
+	static void ProjectPolygonOnAxis(const CPolygon& poly, Vec2 axis, float& min, float& max, Vec2& minPoint, Vec2& maxPoint) 
 	{
-		return (p1 - p2).GetNormal();
-	}
+		const std::vector<Vec2>& worldPoints = poly.GetWorldPoints();
 
-	static void GetAllNormals(const CPolygon& poly, out std::vector<Vec2>& outNormals) 
-	{
-		assert(poly.transformedPoints.size() > 1);
-
-		for (int i = 0; i < poly.transformedPoints.size() - 1; i++)
-		{
-			outNormals.push_back(GetNormalBetween2Points(poly.transformedPoints[i], poly.transformedPoints[i+1]));
-		}
-
-		outNormals.push_back(GetNormalBetween2Points(poly.transformedPoints[poly.transformedPoints.size() - 1], poly.transformedPoints[0]));
-	}
-
-	static void ProjectPolygonOnAxis(const CPolygon& poly, Vec2 axis, out float& min, out float& max, out Vec2& minPoint, out Vec2& maxPoint) 
-	{
-		min = Vec2::Dot(poly.transformedPoints[0], axis);
+		min = Vec2::Dot(worldPoints[0], axis);
 		max = min;
-		minPoint = poly.transformedPoints[0];
+		minPoint = worldPoints[0];
 		maxPoint = minPoint;
-		for (Vec2 p : poly.transformedPoints)
+		for (Vec2 p : worldPoints)
 		{
 			float v = Vec2::Dot(p, axis);
 			if (v < min)
@@ -53,11 +37,11 @@ public:
 	{
 		static std::vector<Vec2> outPointsPoly1;
 		outPointsPoly1.clear();
-		GetFarthestPoinstInDirection(poly1.transformedPoints, colNormal, outPointsPoly1);
+		GetFarthestPoinstInDirection(poly1.GetWorldPoints(), colNormal, outPointsPoly1);
 
 		static std::vector<Vec2> outPointsPoly2;
 		outPointsPoly2.clear();
-		GetFarthestPoinstInDirection(poly2.transformedPoints, -colNormal, outPointsPoly2);
+		GetFarthestPoinstInDirection(poly2.GetWorldPoints(), -colNormal, outPointsPoly2);
 
 		if (outPointsPoly1.size() == 1)
 		{
@@ -104,53 +88,60 @@ public:
 
 	bool CheckCollision(const CPolygon& poly1, const CPolygon& poly2, Vec2& colPoint, Vec2& colNormal, float& colDist) 
 	{
-		std::vector<Vec2> allAxis;
-		allAxis.reserve(poly1.transformedPoints.size() + poly2.transformedPoints.size());
+		//std::vector<Vec2> allAxes;
+		//allAxes.reserve(poly1.transformedPoints.size() + poly2.transformedPoints.size());
 		
-		GetAllNormals(poly2, out allAxis);
-		GetAllNormals(poly1, out allAxis);
+		//poly2.GetAllNormals(allAxes);
+		//poly1.GetAllNormals(allAxes);
+		//allAxes.push_back(Vec2(0,1));
+		//allAxes.push_back(Vec2(1,0));
 		
 		float smallestOverlap = std::numeric_limits<float>::max();
 		Vec2 axisWithSmallestOverlap;
 
-		for (Vec2 axis : allAxis)
+		// Array of pointers to vectors
+		const std::vector<Vec2>* allNormals[] = {&poly1.GetWorldNormals(), &poly2.GetWorldNormals()};
+
+		for (const std::vector<Vec2>* normals : allNormals)
 		{
-			axis.Normalize();
-
-			Vec2 minPoint1;
-			Vec2 maxPoint1;
-			float minp1, maxp1;
-			ProjectPolygonOnAxis(poly1, axis, minp1, maxp1, minPoint1, maxPoint1);
-
-			Vec2 minPoint2;
-			Vec2 maxPoint2;
-			float minp2, maxp2;
-			ProjectPolygonOnAxis(poly2, axis, minp2, maxp2, minPoint2, maxPoint2);
-
-			if (!(maxp1 > minp2 && maxp2 > minp1))
+			for (const Vec2 axis : *normals)
 			{
-				return false;
-			}
-			else 
-			{
-				float minMaxProj = Min(maxp1, maxp2);
-				float maxMinProj = Max(minp1, minp2);
-				float overlap = minMaxProj - maxMinProj;
-				if (overlap < smallestOverlap)
+				Vec2 minPoint1;
+				Vec2 maxPoint1;
+				float minp1, maxp1;
+				ProjectPolygonOnAxis(poly1, axis, minp1, maxp1, minPoint1, maxPoint1);
+
+				Vec2 minPoint2;
+				Vec2 maxPoint2;
+				float minp2, maxp2;
+				ProjectPolygonOnAxis(poly2, axis, minp2, maxp2, minPoint2, maxPoint2);
+
+				if (!(maxp1 > minp2 && maxp2 > minp1))
 				{
-					// To prevent bugs when multiple edges with the same normal axis exist
-					float v = Vec2::Dot(poly1.Getposition() - poly2.Getposition(), axis);
-					if (v > 0)
-						axis *= -1;
+					return false;
+				}
+				else
+				{
+					float minMaxProj = Min(maxp1, maxp2);
+					float maxMinProj = Max(minp1, minp2);
+					float overlap = minMaxProj - maxMinProj;
+					if (overlap < smallestOverlap)
+					{
+						smallestOverlap = overlap;
+						axisWithSmallestOverlap = axis;
 
-					smallestOverlap = overlap;
-					axisWithSmallestOverlap = axis;
+						// To prevent bugs when multiple edges with the same normal axis exist
+						float v = Vec2::Dot(poly1.Getposition() - poly2.Getposition(), axisWithSmallestOverlap);
+						if (v > 0)
+							axisWithSmallestOverlap *= -1;
+
+					}
 				}
 			}
 		}
 
 		colDist = smallestOverlap;
-		colNormal = axisWithSmallestOverlap.Normalized();
+		colNormal = axisWithSmallestOverlap;
 		colPoint = GetCollisionPoint(poly1, poly2, colNormal, colDist);
 
 		return true;

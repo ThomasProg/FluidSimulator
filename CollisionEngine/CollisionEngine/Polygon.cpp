@@ -1,7 +1,6 @@
 #include "Polygon.h"
 #include <GL/glu.h>
 
-
 #include "PhysicEngine.h"
 #include "NarrowPhases/SeparatingAxisTest.h"
 #include "NarrowPhases/GilbertJohnsonKeerthi.h"
@@ -150,6 +149,39 @@ void CPolygon::UpdateTransformedPoints()
 	{
 		transformedPoints[i] = rotation * points[i] + position;
 	}
+
+	transformedPointsDirty = false;
+}
+
+const std::vector<Vec2>& CPolygon::GetWorldNormals() const
+{
+	if (worldNormalsDirty)
+	{
+		// TODO : Mutex if multithread
+		static_assert(!USING_THREADS);
+		CPolygon* poly = const_cast<CPolygon*>(this);
+		poly->UpdateWorldNormals();
+		poly->worldNormalsDirty = false;
+	}
+	return worldNormals;
+}
+
+void CPolygon::Setposition(Vec2 newPos)
+{
+	SetPositionUnsafe(newPos);
+	OnTransformUpdated();
+}
+
+const std::vector<Vec2>& CPolygon::GetWorldPoints() const
+{
+	if (transformedPointsDirty)
+	{
+		// TODO : Mutex if multithread
+		static_assert(!USING_THREADS);
+		CPolygon* poly = const_cast<CPolygon*>(this);
+		poly->UpdateTransformedPoints();
+	}
+	return transformedPoints;
 }
 
 bool	CPolygon::IsLineIntersectingPolygon(const Line& line, Vec2& colPoint, float& colDist) const
@@ -224,6 +256,26 @@ void CPolygon::UpdateSpeed(float deltaTime)
 	speed += forces * (invMass * deltaTime);
 	invWorldTensor = Mat3(rotation) * invLocalTensor * Mat3(rotation.GetInverse());
 	//angularVelocity += Mat3(invWorldTensor) * Vec3(0, 0, torques) * deltaTime;
+}
+
+void CPolygon::GetAllNormals(std::vector<Vec2>& outNormals) const
+{
+	GetWorldPoints();
+	assert(transformedPoints.size() > 1);
+
+	outNormals.clear();
+	outNormals.reserve(transformedPoints.size());
+	for (int i = 0; i < transformedPoints.size() - 1; i++)
+	{
+		outNormals.push_back(GetNormalBetween2Points(transformedPoints[i], transformedPoints[i + 1]));
+	}
+
+	outNormals.push_back(GetNormalBetween2Points(transformedPoints[transformedPoints.size() - 1], transformedPoints[0]));
+}
+
+void CPolygon::UpdateWorldNormals()
+{
+	GetAllNormals(worldNormals);
 }
 
 bool	CPolygon::CheckCollision(const CPolygon& poly, Vec2& colPoint, Vec2& colNormal, float& colDist) const
