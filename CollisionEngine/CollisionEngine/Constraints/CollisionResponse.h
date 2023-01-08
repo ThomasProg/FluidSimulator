@@ -3,6 +3,7 @@
 
 #include "Constraint.h"
 
+// Velocity / Friction response
 class CollisionResponse final : public Constraint
 {
 public:
@@ -43,52 +44,48 @@ public:
 	virtual void RunConstraint() override
 	{
 		gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
-			{
-				auto& [polyA, polyB, point, normal, distance] = collision;
+		//for (const SCollision& collision : gVars->pPhysicEngine->m_collidingPairs)
+		{
+			auto& [polyA, polyB, point, normal, distance] = collision;
 
-		//if (polyA->invMass <= 0 && polyB->invMass <= 0)
-		//	return;
+			Vec3 normal3D = ToVec3(normal);
 
-		//CorrectPosition(collision);
+			Vec3 rA = ToVec3(point - polyA->Getposition());
+			Vec3 rB = ToVec3(point - polyB->Getposition());
+			Vec3 vAi = ToVec3(polyA->speed) + Vec3::Cross(Vec3(0, 0, polyA->angularVelocity), rA);
+			Vec3 vBi = ToVec3(polyB->speed) + Vec3::Cross(Vec3(0, 0, polyB->angularVelocity), rB);
 
-		Vec3 normal3D = ToVec3(normal);
+			Vec3 momentumA = polyA->invWorldTensor * Vec3::Cross(rA, normal3D);
+			Vec3 momentumB = polyB->invWorldTensor * Vec3::Cross(rB, normal3D);
 
-		Vec3 rA = ToVec3(point - polyA->Getposition());
-		Vec3 rB = ToVec3(point - polyB->Getposition());
-		Vec3 vAi = ToVec3(polyA->speed) + Vec3::Cross(Vec3(0, 0, polyA->angularVelocity), rA);
-		Vec3 vBi = ToVec3(polyB->speed) + Vec3::Cross(Vec3(0, 0, polyB->angularVelocity), rB);
+			float weightRotA = Vec3::Dot(Vec3::Cross(momentumA, rA), normal3D);
+			float weightRotB = Vec3::Dot(Vec3::Cross(momentumB, rB), normal3D);
 
-		Vec3 momentumA = polyA->invWorldTensor * Vec3::Cross(rA, normal3D);
-		Vec3 momentumB = polyB->invWorldTensor * Vec3::Cross(rB, normal3D);
+			float relativeSpeed = Vec3::Dot(vAi - vBi, normal3D);
 
-		float weightRotA = Vec3::Dot(Vec3::Cross(momentumA, rA), normal3D);
-		float weightRotB = Vec3::Dot(Vec3::Cross(momentumB, rB), normal3D);
+			if (relativeSpeed < 0)
+				return;
 
-		float relativeSpeed = Vec3::Dot(vAi - vBi, normal3D);
+			float j = (-(1 + restitution) * relativeSpeed) / (polyA->invMass + polyB->invMass + weightRotA + weightRotB);
 
-		if (relativeSpeed < 0)
-			return;
+			//collision.polyA->Setposition(collision.polyA->Getposition() - collision.polyA->speed * frameTime);
+			//collision.polyB->Setposition(collision.polyB->Getposition() - collision.polyB->speed * frameTime);
 
-		float j = (-(1 + restitution) * relativeSpeed) / (polyA->invMass + polyB->invMass + weightRotA + weightRotB);
+			ApplyFriction(collision, j);
 
-		//collision.polyA->Setposition(collision.polyA->Getposition() - collision.polyA->speed * frameTime);
-		//collision.polyB->Setposition(collision.polyB->Getposition() - collision.polyB->speed * frameTime);
+			if (!polyA->IsStatic())
+				polyA->speed += normal * (j * polyA->invMass);
+			if (!polyB->IsStatic())
+				polyB->speed -= normal * (j * polyB->invMass);
 
-		if (!polyA->IsStatic())
-			polyA->speed += normal * (j * polyA->invMass);
-		if (!polyB->IsStatic())
-			polyB->speed -= normal * (j * polyB->invMass);
+			Vec3 angularVelocityA = momentumA * j;
+			Vec3 angularVelocityB = momentumB * j;
 
-		ApplyFriction(collision, j);
-
-		Vec3 angularVelocityA = momentumA * j;
-		Vec3 angularVelocityB = momentumB * j;
-
-		if (!polyA->IsStatic())
-			polyA->angularVelocity += angularVelocityA.z;
-		if (!polyB->IsStatic())
-			polyB->angularVelocity -= angularVelocityB.z;
-			});
+			if (!polyA->IsStatic())
+				polyA->angularVelocity += angularVelocityA.z;
+			if (!polyB->IsStatic())
+				polyB->angularVelocity -= angularVelocityB.z;
+		});
 	}
 };
 
