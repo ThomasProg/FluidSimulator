@@ -31,7 +31,19 @@ The SAT and the EPA both display the correct collision point, normal and MTV.
 I have explained the SAT algorithms, and potential optimizations and all on my website : 
 https://thomasprog.github.io/Algo-A-to-Z/collisions/narrowphase/sat/
 
+Physics Response has been added:
+- Position is fixed
+- Linear and angular velocity are updated
+- Friction is applied
+
+The behavior CPhysicsResponse has been made to manage physics reponse in PhysicsResponse.h.
+Constraints can be found in the Constraints folder.
+
+Stability is working.
+
+Videos can be found in Screens/Response
+
+
 TODO : 
 - Finish implement AABBTree 
 - Implementing other broadphases
-- Physics Response
