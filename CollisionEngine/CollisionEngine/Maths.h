@@ -198,6 +198,8 @@ struct Vec3
 
 	Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
+	Vec3(const Vec2& rhs) : x(rhs.x), y(rhs.y), z(0.f) {}
+
 	static float Dot(const Vec3& lhs, const Vec3& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;

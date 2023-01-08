@@ -10,11 +10,6 @@ public:
 	float restitution = 0.6f;
 	float friction = 0.1f;
 
-	static Vec3 ToVec3(const Vec2& v)
-	{
-		return Vec3(v.x, v.y, 0.f);
-	}
-
 	static Vec2 ToVec2(const Vec3& v)
 	{
 		return Vec2(v.x, v.y);
@@ -22,13 +17,13 @@ public:
 
 	void ApplyFriction(const SCollision& collision, float impulse)
 	{
-		Vec3 n = ToVec3(collision.normal);
+		Vec3 n = Vec3(collision.normal);
 		auto& polyA = collision.polyA;
 		auto& polyB = collision.polyB;
 
-		Vec3 diffSpeed = ToVec3(polyA->speed - polyB->speed);
+		Vec3 diffSpeed = Vec3(polyA->speed - polyB->speed);
 		Vec3 cross = Vec3::Cross(diffSpeed, n);
-		if (cross.SqrLength() < 0.000001)
+		if (cross.SqrLength() <= 0.f)
 			return;
 
 		Vec3 tangent = Vec3::Cross(cross, n).GetUnit();
@@ -54,12 +49,12 @@ public:
 			auto& normal = collision.normal;
 			auto& distance = collision.distance;
 
-			Vec3 normal3D = ToVec3(normal);
+			Vec3 normal3D = Vec3(normal);
 
-			Vec3 rA = ToVec3(point - polyA->Getposition());
-			Vec3 rB = ToVec3(point - polyB->Getposition());
-			Vec3 vAi = ToVec3(polyA->speed) + Vec3::Cross(Vec3(0, 0, polyA->angularVelocity), rA);
-			Vec3 vBi = ToVec3(polyB->speed) + Vec3::Cross(Vec3(0, 0, polyB->angularVelocity), rB);
+			Vec3 rA = Vec3(point - polyA->Getposition());
+			Vec3 rB = Vec3(point - polyB->Getposition());
+			Vec3 vAi = Vec3(polyA->speed) + Vec3::Cross(Vec3(0, 0, polyA->angularVelocity), rA);
+			Vec3 vBi = Vec3(polyB->speed) + Vec3::Cross(Vec3(0, 0, polyB->angularVelocity), rB);
 
 			Vec3 momentumA = polyA->invWorldTensor * Vec3::Cross(rA, normal3D);
 			Vec3 momentumB = polyB->invWorldTensor * Vec3::Cross(rB, normal3D);

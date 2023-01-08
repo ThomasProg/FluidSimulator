@@ -35,13 +35,19 @@ struct SCollision
 		//float weightRotB;
 		//float relativeSpeed;
 
-		//float impulse;
-
+		float impulse;
+		Vec3 momentumA;
+		Vec3 momentumB;
 	} cache;
 
 	void ComputeInvMassSum()
 	{
 		cache.invMassSum = polyA->invMass + polyB->invMass;
+	}
+
+	void UpdateCache()
+	{
+		ComputeInvMassSum();
 	}
 };
 
