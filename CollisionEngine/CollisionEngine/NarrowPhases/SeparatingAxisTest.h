@@ -150,6 +150,7 @@ public:
 
 using SAT = SeparatingAxisTest;
 
+// Used to check on only 1 axis ; useful for caching
 class QuickSeparatingAxisTest
 {
 public:

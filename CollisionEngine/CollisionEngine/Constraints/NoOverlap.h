@@ -47,6 +47,10 @@ public:
 				auto& polyA = collision.polyA;
 				auto& polyB = collision.polyB;
 
+				// Only works because the rotation is not modified.
+				// The rotation should be modified, 
+				// but most of the time rotation fix is not that important, 
+				// especially compared to the performance boost avoiding it gives.
 				QuickSAT quickSAT;
 				if (quickSAT.CheckCollision(*polyA, *polyB, collision.normal, collision.distance))
 				{
