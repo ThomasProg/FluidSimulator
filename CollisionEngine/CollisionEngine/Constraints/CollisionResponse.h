@@ -27,12 +27,14 @@ public:
 		auto& polyB = collision.polyB;
 
 		Vec3 diffSpeed = ToVec3(polyA->speed - polyB->speed);
-		if (Vec3::Cross(diffSpeed, n).SqrLength() < 0.000001)
+		Vec3 cross = Vec3::Cross(diffSpeed, n);
+		if (cross.SqrLength() < 0.000001)
 			return;
-		Vec3 tangent = Vec3::Cross(Vec3::Cross(diffSpeed, n), n).GetUnit();
+
+		Vec3 tangent = Vec3::Cross(cross, n).GetUnit();
 		float tangentVelocity = Vec3::Dot(diffSpeed, tangent);
 
-		float j = -tangentVelocity / (polyA->invMass + polyB->invMass);
+		float j = -tangentVelocity / collision.cache.invMassSum;
 		j = Clamp(j, -abs(impulse) * friction, abs(impulse) * friction);
 
 		if (!polyA->IsStatic())
@@ -43,10 +45,14 @@ public:
 
 	virtual void RunConstraint() override
 	{
-		gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
-		//for (const SCollision& collision : gVars->pPhysicEngine->m_collidingPairs)
+		//gVars->pPhysicEngine->ForEachCollision([&](const SCollision& collision)
+		for (const SCollision& collision : gVars->pPhysicEngine->m_collidingPairs)
 		{
-			auto& [polyA, polyB, point, normal, distance] = collision;
+			auto& polyA = collision.polyA;
+			auto& polyB = collision.polyB;
+			auto& point = collision.point;
+			auto& normal = collision.normal;
+			auto& distance = collision.distance;
 
 			Vec3 normal3D = ToVec3(normal);
 
@@ -63,29 +69,25 @@ public:
 
 			float relativeSpeed = Vec3::Dot(vAi - vBi, normal3D);
 
-			if (relativeSpeed < 0)
-				return;
-
-			float j = (-(1 + restitution) * relativeSpeed) / (polyA->invMass + polyB->invMass + weightRotA + weightRotB);
-
-			//collision.polyA->Setposition(collision.polyA->Getposition() - collision.polyA->speed * frameTime);
-			//collision.polyB->Setposition(collision.polyB->Getposition() - collision.polyB->speed * frameTime);
+			float j = (-(1 + restitution) * relativeSpeed) / (collision.cache.invMassSum + weightRotA + weightRotB);
 
 			ApplyFriction(collision, j);
-
-			if (!polyA->IsStatic())
-				polyA->speed += normal * (j * polyA->invMass);
-			if (!polyB->IsStatic())
-				polyB->speed -= normal * (j * polyB->invMass);
 
 			Vec3 angularVelocityA = momentumA * j;
 			Vec3 angularVelocityB = momentumB * j;
 
 			if (!polyA->IsStatic())
+			{
+				polyA->speed += normal * (j * polyA->invMass);
 				polyA->angularVelocity += angularVelocityA.z;
+			}
+
 			if (!polyB->IsStatic())
+			{
+				polyB->speed -= normal * (j * polyB->invMass);
 				polyB->angularVelocity -= angularVelocityB.z;
-		});
+			}
+		};
 	}
 };
 

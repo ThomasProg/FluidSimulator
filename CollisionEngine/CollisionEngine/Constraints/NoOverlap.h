@@ -9,38 +9,84 @@ public:
 	float steering = 0.2f;
 	float maxCorrection = 5.f;
 	float slop = 0.f;
+	int nbTimes = 2;
+
+	struct Cache
+	{
+		float absoluteCorrectionA;
+		float absoluteCorrectionB;
+	};
+
+	std::vector<Cache> ComputeCache()
+	{
+		std::vector<Cache> cachePerPair(m_collidingPairs->size());
+		//for (const SCollision& collision : *m_collidingPairs)
+		for (int i = 0; i < m_collidingPairs->size(); i++)
+		{
+			const SCollision& collision = (*m_collidingPairs)[i];
+			Cache& cache = cachePerPair[i];
+
+			const float absoluteCorrection = steering / collision.cache.invMassSum;
+			cache.absoluteCorrectionA = absoluteCorrection * collision.polyA->invMass;
+			cache.absoluteCorrectionB = absoluteCorrection * collision.polyB->invMass;
+		}
+		return cachePerPair;
+	}
 
 	virtual void RunConstraint() override
 	{
-		for (SCollision& collision : *m_collidingPairs)
+		std::vector<Cache> cachePerPair = ComputeCache();
+
+		for (int i = 0; i < nbTimes; i++)
 		{
-			auto& [polyA, polyB, point, normal, distance] = collision;
-
-			QuickSAT quickSAT;
-			if (quickSAT.CheckCollision(*polyA, *polyB, normal, point, distance))
+			for (int i = 0; i < m_collidingPairs->size(); i++)
 			{
+				SCollision& collision = (*m_collidingPairs)[i];
+				Cache& cache = cachePerPair[i];
 
-				//float sumInvMass = polyA->invMass + polyB->invMass;
+				auto& polyA = collision.polyA;
+				auto& polyB = collision.polyB;
 
-				//float steeringForce = Clamp(steering * (distance + slop), 0.f, maxCorrection);
-				//Vec2 impulse = normal * (-steeringForce / sumInvMass);
-
-				//polyA->ApplyDirectImpulse(collision.point, impulse);
-				//polyB->ApplyDirectImpulse(collision.point, -impulse);
-				//
-				//polyA->UpdateTransformedPoints();
-				//polyB->UpdateTransformedPoints();
-
-				float correction = -(collision.distance * steering) / (polyA->invMass + polyB->invMass);
-
-				if (!polyA->IsStatic())
+				QuickSAT quickSAT;
+				if (quickSAT.CheckCollision(*polyA, *polyB, collision.normal, collision.distance))
 				{
-					polyA->SetPositionUnsafe(polyA->Getposition() + collision.normal * (polyA->invMass * correction));
+					if (!polyA->IsStatic())
+					{
+						polyA->SetPositionUnsafe(polyA->Getposition() - collision.normal * (collision.distance * cache.absoluteCorrectionA));
 
+					}
+					if (!polyB->IsStatic())
+					{
+						polyB->SetPositionUnsafe(polyB->Getposition() + collision.normal * (collision.distance * cache.absoluteCorrectionB));
+					}
 				}
-				if (!polyB->IsStatic())
+			}
+		}
+	}
+
+	void RunConstraintWithoutCache()
+	{
+		for (int i = 0; i < nbTimes; i++)
+		{
+			for (SCollision& collision : *m_collidingPairs)
+			{
+				auto& polyA = collision.polyA;
+				auto& polyB = collision.polyB;
+
+				QuickSAT quickSAT;
+				if (quickSAT.CheckCollision(*polyA, *polyB, collision.normal, collision.distance))
 				{
-					polyB->SetPositionUnsafe(polyB->Getposition() - collision.normal * (polyB->invMass * correction));
+					float correction = (collision.distance * steering) / collision.cache.invMassSum;
+
+					if (!polyA->IsStatic())
+					{
+						polyA->SetPositionUnsafe(polyA->Getposition() - collision.normal * (polyA->invMass * correction));
+
+					}
+					if (!polyB->IsStatic())
+					{
+						polyB->SetPositionUnsafe(polyB->Getposition() + collision.normal * (polyB->invMass * correction));
+					}
 				}
 			}
 		}

@@ -35,25 +35,19 @@ private:
 public:
 	virtual void Update(float frameTime) override
 	{
-		auto p = gVars->pPhysicEngine->m_collidingPairs;
-		for (int i = 0; i < 2; i++)
+		for (SCollision& col : gVars->pPhysicEngine->m_collidingPairs)
 		{
-			NoOverlap noOverlap;
-			noOverlap.SetCollisions(p);
-			noOverlap.RunConstraint();
+			col.ComputeInvMassSum();
 		}
 
 		CollisionResponse colResponse;
 		colResponse.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
 		colResponse.RunConstraint();
 
-		auto p2 = gVars->pPhysicEngine->m_collidingPairs;
-		for (int i = 0; i < 2; i++)
-		{
-			NoOverlap noOverlap;
-			noOverlap.SetCollisions(p2);
-			noOverlap.RunConstraint();
-		}
+		NoOverlap noOverlap;
+		noOverlap.nbTimes = 30;
+		noOverlap.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
+		noOverlap.RunConstraint();
 
 		UpdateTransforms();
 	}

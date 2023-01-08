@@ -156,6 +156,15 @@ public:
 
 	bool CheckCollision(const CPolygon& poly1, const CPolygon& poly2, const Vec2& axis, Vec2& colPoint, float& colDist)
 	{
+		if (CheckCollision(poly1, poly2, axis, colDist))
+		{
+			colPoint = SeparatingAxisTest::GetCollisionPoint(poly1, poly2, axis, colDist);
+		}
+		return false;
+	}
+
+	bool CheckCollision(const CPolygon& poly1, const CPolygon& poly2, const Vec2& axis, float& colDist)
+	{
 		assert(axis.IsNormalized());
 
 		Vec2 minPoint1;
@@ -176,11 +185,10 @@ public:
 		{
 			float minMaxProj = Min(maxp1, maxp2);
 			float maxMinProj = Max(minp1, minp2);
-			float overlap = minMaxProj - maxMinProj;
-			{
-				colDist = overlap;
-				colPoint = SeparatingAxisTest::GetCollisionPoint(poly1, poly2, axis, colDist);
-			}
+
+			// Return values
+			colDist = minMaxProj - maxMinProj;
+			return true;
 		}
 	}
 };

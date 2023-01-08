@@ -19,6 +19,30 @@ struct SCollision
 	Vec2	point;
 	Vec2	normal;
 	float	distance;
+
+	// Additional cached data
+	struct
+	{
+		float invMassSum;
+
+		//Vec3 aToPoint;
+		//Vec3 bToPoint;
+		//Vec3 vAi;
+		//Vec3 vBi;
+		//Vec3 momentumA;
+		//Vec3 momentumB;
+		//float weightRotA;
+		//float weightRotB;
+		//float relativeSpeed;
+
+		//float impulse;
+
+	} cache;
+
+	void ComputeInvMassSum()
+	{
+		cache.invMassSum = polyA->invMass + polyB->invMass;
+	}
 };
 
 class CPhysicEngine
