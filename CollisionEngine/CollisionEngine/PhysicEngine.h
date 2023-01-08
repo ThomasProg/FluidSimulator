@@ -35,9 +35,9 @@ struct SCollision
 		//float weightRotB;
 		//float relativeSpeed;
 
-		float impulse;
-		Vec3 momentumA;
-		Vec3 momentumB;
+		//float impulse;
+		//Vec3 momentumA;
+		//Vec3 momentumB;
 	} cache;
 
 	void ComputeInvMassSum()

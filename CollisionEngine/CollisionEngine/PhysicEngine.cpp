@@ -59,7 +59,7 @@ void	CPhysicEngine::DetectCollisions()
 
 void	CPhysicEngine::Step(float deltaTime)
 {
-	deltaTime = Min(deltaTime, 1.0f / 15.0f);
+	deltaTime = Min(deltaTime, 1.0f / 200.0f);
 
 	if (!m_active)
 	{

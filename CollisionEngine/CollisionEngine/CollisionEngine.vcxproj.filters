@@ -180,9 +180,6 @@
     <ClInclude Include="Constraints\Constraint.h">
       <Filter>Fichiers sources\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="Constraints\Friction.h">
-      <Filter>Fichiers sources\Constraints</Filter>
-    </ClInclude>
     <ClInclude Include="Constraints\NoOverlap.h">
       <Filter>Fichiers sources\Constraints</Filter>
     </ClInclude>

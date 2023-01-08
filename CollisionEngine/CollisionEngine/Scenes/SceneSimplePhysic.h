@@ -47,7 +47,7 @@ private:
 		}
 
 		CPolygonPtr sqr;
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 
 			sqr = gVars->pWorld->AddSquare(coeff * 10.0f);

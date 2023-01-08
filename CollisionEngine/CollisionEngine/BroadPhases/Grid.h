@@ -31,30 +31,6 @@ namespace std {
 
 }
 
-namespace std {
-
-    template <>
-    struct hash<SPolygonPair>
-    {
-        std::size_t operator()(const SPolygonPair& pair) const
-        {
-            using std::size_t;
-            using std::hash;
-            using std::string;
-
-            // Compute individual hash values for first,
-            // second and third and combine them using XOR
-            // and bit shifting:
-
-            size_t p1 = (size_t)pair.GetpolyA().get(); 
-            size_t p2 = (size_t)pair.GetpolyB().get(); 
-
-            return (3463 * p1) ^ (3467 * p2);
-        }
-    };
-
-}
-
 static Vec2Int Vec2ToGridCellPos(const Vec2& pos, float gridCellSize)
 {
     return

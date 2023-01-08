@@ -11,6 +11,27 @@ public:
 	float slop = 0.f;
 	int nbTimes = 2;
 
+	struct PreviousContactPoint
+	{
+		Vec3 collisionPointRelativeToA;
+		Vec3 collisionPointRelativeToB;
+
+		Vec2 point;
+		Vec3 normal;
+		float lastDist;
+		float totalDist = 0.f;
+
+		Vec2 impulseDelta = Vec2(0,0);
+	};
+
+	struct PerPoly
+	{
+		Vec2 impulseSum = Vec2(0.f, 0.f);
+		Vec2 lastIterationSum = Vec2(0.f, 0.f);
+	};
+	std::unordered_map<CPolygonPtr, PerPoly> perPoly;
+
+
 	struct Cache
 	{
 		float absoluteCorrectionA;
@@ -37,7 +58,7 @@ public:
 	{
 		std::vector<Cache> cachePerPair = ComputeCache();
 
-		for (int i = 0; i < nbTimes; i++)
+		for (int time = 0; time < nbTimes; time++)
 		{
 			for (int i = 0; i < m_collidingPairs->size(); i++)
 			{
@@ -56,12 +77,18 @@ public:
 				{
 					if (!polyA->IsStatic())
 					{
-						polyA->SetPositionUnsafe(polyA->Getposition() - collision.normal * (collision.distance * cache.absoluteCorrectionA));
+						Vec2 impulse = collision.normal * (collision.distance * cache.absoluteCorrectionA);
+						//auto it = perPoly.emplace(polyA, PerPoly());
+						//it.first->second.impulseSum -= impulse;
+						polyA->SetPositionUnsafe(polyA->Getposition() - impulse);
 
 					}
 					if (!polyB->IsStatic())
 					{
-						polyB->SetPositionUnsafe(polyB->Getposition() + collision.normal * (collision.distance * cache.absoluteCorrectionB));
+						Vec2 impulse = collision.normal * (collision.distance * cache.absoluteCorrectionB);
+						//auto it = perPoly.emplace(polyA, PerPoly());
+						//it.first->second.impulseSum += impulse;
+						polyB->SetPositionUnsafe(polyB->Getposition() + impulse);
 					}
 				}
 			}

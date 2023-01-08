@@ -9,6 +9,7 @@
 #include "World.h"
 #include "Constraints/NoOverlap.h"
 #include "Constraints/CollisionResponse.h"
+#include "Constraints/WarmContacts.h"
 #include <unordered_set>
 
 #define ALIAS(source, var) auto& var = source . var ;
@@ -17,6 +18,8 @@ class CPhysicsResponse : public CBehavior
 {
 private:
 	std::unordered_set<CPolygonPtr> set;
+	WarmContacts warmContacts;
+
 	void UpdateTransforms()
 	{
 		set.reserve(gVars->pPhysicEngine->m_collidingPairs.size() * 2);
@@ -37,15 +40,19 @@ public:
 	{
 		for (SCollision& col : gVars->pPhysicEngine->m_collidingPairs)
 		{
-			col.ComputeInvMassSum();
+			col.UpdateCache();
 		}
+
+		//warmContacts.nbTimes = 30;
+		//warmContacts.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
+		//warmContacts.RunConstraint();
 
 		CollisionResponse colResponse;
 		colResponse.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
 		colResponse.RunConstraint();
 
 		NoOverlap noOverlap;
-		noOverlap.nbTimes = 30;
+		noOverlap.nbTimes = 20;
 		noOverlap.SetCollisions(gVars->pPhysicEngine->m_collidingPairs);
 		noOverlap.RunConstraint();
 
