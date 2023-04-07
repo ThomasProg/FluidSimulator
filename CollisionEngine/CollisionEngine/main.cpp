@@ -16,6 +16,8 @@
 #include "Scenes/SceneSimplePhysic.h"
 #include "Scenes/SceneSmallPhysic.h"
 #include "Scenes/SceneComplexPhysic.h"
+#include "Scenes/SceneFluid.h"
+
 
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 /*
@@ -25,6 +27,7 @@ int _tmain(int argc, char** argv)
 {
     InitApplication(1260, 768, 50.0f);
 
+    gVars->pSceneManager->AddScene(new CSceneFluid());
     gVars->pSceneManager->AddScene(new CSceneSimplePhysic());
     gVars->pSceneManager->AddScene(new CSceneDebugCollisions());
     gVars->pSceneManager->AddScene(new CSceneBouncingPolys(200));
