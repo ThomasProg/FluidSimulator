@@ -11,7 +11,7 @@ public:
 	template<class TFunctor>
 	void Fill(size_t count, TFunctor functor)
 	{
-		if (count > m_size)
+		if (count != m_size)
 		{
 			SetSize(count);
 		}

@@ -28,6 +28,9 @@
     <Filter Include="Fichiers sources\Constraints">
       <UniqueIdentifier>{085a28f0-e972-4d0e-ab4d-8b2111db3a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Fluids">
+      <UniqueIdentifier>{3f44aa78-6778-4697-905e-5319f0056f13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -186,6 +189,15 @@
     <ClInclude Include="Constraints\WarmContacts.h">
       <Filter>Fichiers sources\Constraints</Filter>
     </ClInclude>
+    <ClInclude Include="Fluids\SPHMullerSystem.h">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\Fluid.h">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\DataOrientedHelpers.h">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -229,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="InertiaTensor.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\SPHMullerSystem.cpp">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\Fluid.cpp">
+      <Filter>Fichiers sources\Fluids</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

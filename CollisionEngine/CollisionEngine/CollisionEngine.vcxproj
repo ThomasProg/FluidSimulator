@@ -116,6 +116,9 @@
     <ClInclude Include="FluidMesh.h" />
     <ClInclude Include="FluidSpawner.h" />
     <ClInclude Include="FluidSystem.h" />
+    <ClInclude Include="Fluids\DataOrientedHelpers.h" />
+    <ClInclude Include="Fluids\Fluid.h" />
+    <ClInclude Include="Fluids\SPHMullerSystem.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="InertiaTensor.h" />
     <ClInclude Include="NarrowPhase.h" />
@@ -146,6 +149,8 @@
   <ItemGroup>
     <ClCompile Include="BroadPhaseSwitcher.cpp" />
     <ClCompile Include="FluidSystem.cpp" />
+    <ClCompile Include="Fluids\Fluid.cpp" />
+    <ClCompile Include="Fluids\SPHMullerSystem.cpp" />
     <ClCompile Include="InertiaTensor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GlobaleVariables.cpp" />

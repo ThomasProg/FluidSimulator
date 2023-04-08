@@ -327,18 +327,18 @@ void	CFluidSystem::BorderCollisions()
 	for (size_t i = 0; i < m_positions.size(); ++i)
 	{
 		Vec2& pos = m_positions[i];
-		if (pos.x <= m_min.x && m_velocities[i].x < 0.0f)
-		{
-			pos.x = m_min.x;
-			m_velocities[i].x *= -restitution;
-			m_velocities[i].y *= friction;
-		}
-		else if (pos.x >= m_max.x && m_velocities[i].x > 0.0f)
-		{
-			pos.x = m_max.x;
-			m_velocities[i].x *= -restitution;
-			m_velocities[i].y *= friction;
-		}
+		//if (pos.x <= m_min.x && m_velocities[i].x < 0.0f)
+		//{
+		//	pos.x = m_min.x;
+		//	m_velocities[i].x *= -restitution;
+		//	m_velocities[i].y *= friction;
+		//}
+		//else if (pos.x >= m_max.x && m_velocities[i].x > 0.0f)
+		//{
+		//	pos.x = m_max.x;
+		//	m_velocities[i].x *= -restitution;
+		//	m_velocities[i].y *= friction;
+		//}
 
 		if (pos.y <= m_min.y  && m_velocities[i].y < 0.0f)
 		{
@@ -346,12 +346,12 @@ void	CFluidSystem::BorderCollisions()
 			m_velocities[i].y *= -restitution;
 			m_velocities[i].x *= friction;
 		}
-		else if (pos.y >= m_max.y  && m_velocities[i].y > 0.0f)
-		{
-			pos.y = m_max.y;
-			m_velocities[i].y *= -restitution;
-			m_velocities[i].x *= friction;
-		}
+		//else if (pos.y >= m_max.y  && m_velocities[i].y > 0.0f)
+		//{
+		//	pos.y = m_max.y;
+		//	m_velocities[i].y *= -restitution;
+		//	m_velocities[i].x *= friction;
+		//}
 	}
 }
 

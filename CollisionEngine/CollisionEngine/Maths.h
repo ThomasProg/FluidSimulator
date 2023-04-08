@@ -128,6 +128,11 @@ struct Vec2
 		return x*x + y*y;
 	}
 
+	static float SqrDist(Vec2 v1, Vec2 v2)
+	{
+		return (v2 - v1).GetSqrLength();
+	}
+
 	void	Normalize()
 	{
 		float length = GetLength();
