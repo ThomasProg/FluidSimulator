@@ -278,6 +278,11 @@ struct Vec2Int
 	{
 		return rhs.x == x && rhs.y == y;
 	}
+
+	int GetArea() const
+	{
+		return x * y;
+	}
 };
 
 
