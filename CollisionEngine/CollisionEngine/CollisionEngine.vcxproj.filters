@@ -198,6 +198,9 @@
     <ClInclude Include="Fluids\DataOrientedHelpers.h">
       <Filter>Fichiers sources\Fluids</Filter>
     </ClInclude>
+    <ClInclude Include="Fluids\EulerSystem.h">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -246,6 +249,9 @@
       <Filter>Fichiers sources\Fluids</Filter>
     </ClCompile>
     <ClCompile Include="Fluids\Fluid.cpp">
+      <Filter>Fichiers sources\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\EulerSystem.cpp">
       <Filter>Fichiers sources\Fluids</Filter>
     </ClCompile>
   </ItemGroup>

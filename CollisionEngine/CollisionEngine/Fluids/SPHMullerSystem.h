@@ -135,6 +135,7 @@ public:
 	{
 		unsigned int index = fluid.GetIndex();
 		QuickRemove(particlesPerFluid, index);
+		Super::RemoveFluid(fluid);
 	}
 
 public:
