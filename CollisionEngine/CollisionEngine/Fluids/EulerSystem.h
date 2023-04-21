@@ -88,19 +88,20 @@ private:
 	void Draw()
 	{
 		// TODO : For each fluid
-		//m_mesh.Fill(particlesPerFluid[0].particleSignatures.size(), [&](size_t iVertex, float& x, float& y, float& r, float& g, float& b)
-		//{
-		//	Fluid f = MakeFluid(0);
-		//	Particle p = particlesPerFluid[0].MakeParticle(iVertex);
+		m_mesh.Fill(worldPositionPerCell.size(), [&](size_t iVertex, float& x, float& y, float& r, float& g, float& b)
+		{
+			Cell cell = MakeCell(iVertex);
+			Super::Fluid f;
+			FindFluid(cell.GetFluidRef(), f);
 
-		//	const Vec2& pos = p.GetPositionRef();
-		//	const Vec3& color = f.GetVisualPropertiesRef().color;
-		//	x = pos.x;
-		//	y = pos.y;
-		//	r = color.x;
-		//	g = color.y;
-		//	b = color.z;
-		//});
+			const Vec2& pos = cell.GetWorldPosRef();
+			const Vec3& color = f.GetVisualPropertiesRef().color;
+			x = pos.x;
+			y = pos.y;
+			r = color.x;
+			g = color.y;
+			b = color.z;
+		});
 
 		m_mesh.Draw();
 	}
@@ -123,7 +124,7 @@ public:
 
 				Vec2 pos;
 				pos.x = xIndex * newCellSize.x + (yIndex % 2) * newCellSize.x / 2;
-				pos.y = xIndex * newCellSize.y;
+				pos.y = yIndex * newCellSize.y;
 				cell.GetWorldPosRef() = pos + gridLocation;
 			}
 		}
@@ -159,6 +160,17 @@ public:
 	virtual void AddFluidAt(Super::Fluid superFluid, Vec2 pos, Vec2 velocity, unsigned int amount, float radius) override
 	{
 		Fluid fluid = superFluid;
+
+		float sqrRadius = radius * radius;
+
+		// TODO : Get cell by position, and update those close to it for better perf
+		ForEachCell([&](Cell& cell)
+		{
+			if (Vec2::SqrDist(cell.GetWorldPosRef(), pos) < sqrRadius)
+			{
+				cell.GetFluidRef() = fluid;
+			}
+		});
 
 		//// TODO : Use radius
 		//for (unsigned int i = 0; i < amount; i++)

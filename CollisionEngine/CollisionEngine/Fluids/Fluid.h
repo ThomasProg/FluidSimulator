@@ -108,6 +108,18 @@ public:
 // UTILITY
 namespace NFluid
 {
+	inline IFluidSystem::Fluid AddAir(IFluidSystem& system)
+	{
+		IFluidSystem::Fluid fluid = system.AddFluid();
+		fluid.GetVisualPropertiesRef().color = { 0.6,0.6,0.6 };
+
+		IFluidSystem::FluidPhysicalProperties& physicalAttributes = fluid.GetPhysicalPropertiesRef();
+		physicalAttributes.viscosity = 0.0f;
+
+		return fluid;
+	}
+
+
 	inline IFluidSystem::Fluid AddWater(IFluidSystem& system)
 	{
 		IFluidSystem::Fluid fluid = system.AddFluid();
