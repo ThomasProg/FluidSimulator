@@ -14,6 +14,9 @@ IMPLEMENT_KEY(FluidSignature, fluidID, friend class IFluidSystem;)
 
 class IFluidSystem
 {
+protected:
+	Vec2 gravity = Vec2(0.0f, -9.8f);
+
 #pragma region FluidData
 public:
 	class Fluid;
