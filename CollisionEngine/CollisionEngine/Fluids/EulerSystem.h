@@ -135,9 +135,17 @@ public:
 
 	virtual void Update(float deltaTime) override 
 	{
-
+		ForEachCell([this, deltaTime](Cell& cell)
+			{
+				IntegrateGravity(cell, deltaTime);
+			});
 
 		Draw();
+	}
+
+	void IntegrateGravity(Cell& cell, float deltaTime)
+	{
+		cell.GetVelocityRef() = gravity * deltaTime;
 	}
 
 	virtual Super::Fluid AddFluid() override
