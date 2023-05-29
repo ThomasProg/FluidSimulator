@@ -119,6 +119,11 @@
     <ClInclude Include="Fluids\DataOrientedHelpers.h" />
     <ClInclude Include="Fluids\EulerSystem.h" />
     <ClInclude Include="Fluids\Fluid.h" />
+    <ClInclude Include="Fluids\OOP\EulerFluidSystem.hpp" />
+    <ClInclude Include="Fluids\OOP\Fluid.hpp" />
+    <ClInclude Include="Fluids\OOP\FluidSystem.hpp" />
+    <ClInclude Include="Fluids\OOP\Particle.hpp" />
+    <ClInclude Include="Fluids\OOP\SPHMullerFluidSystem.hpp" />
     <ClInclude Include="Fluids\SPHMullerSystem.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="InertiaTensor.h" />
@@ -152,6 +157,11 @@
     <ClCompile Include="FluidSystem.cpp" />
     <ClCompile Include="Fluids\EulerSystem.cpp" />
     <ClCompile Include="Fluids\Fluid.cpp" />
+    <ClCompile Include="Fluids\OOP\EulerFluidSystem.cpp" />
+    <ClCompile Include="Fluids\OOP\Fluid.cpp" />
+    <ClCompile Include="Fluids\OOP\FluidSystem.cpp" />
+    <ClCompile Include="Fluids\OOP\Particle.cpp" />
+    <ClCompile Include="Fluids\OOP\SPHMullerFluidSystem.cpp" />
     <ClCompile Include="Fluids\SPHMullerSystem.cpp" />
     <ClCompile Include="InertiaTensor.cpp" />
     <ClCompile Include="main.cpp" />

@@ -31,6 +31,9 @@
     <Filter Include="Fichiers sources\Fluids">
       <UniqueIdentifier>{3f44aa78-6778-4697-905e-5319f0056f13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Fluids\OOP">
+      <UniqueIdentifier>{f6e18087-7afa-4322-891e-440eb0b3d9a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -201,6 +204,21 @@
     <ClInclude Include="Fluids\EulerSystem.h">
       <Filter>Fichiers sources\Fluids</Filter>
     </ClInclude>
+    <ClInclude Include="Fluids\OOP\EulerFluidSystem.hpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\OOP\Fluid.hpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\OOP\FluidSystem.hpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\OOP\Particle.hpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluids\OOP\SPHMullerFluidSystem.hpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -253,6 +271,21 @@
     </ClCompile>
     <ClCompile Include="Fluids\EulerSystem.cpp">
       <Filter>Fichiers sources\Fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\OOP\Fluid.cpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\OOP\FluidSystem.cpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\OOP\Particle.cpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\OOP\SPHMullerFluidSystem.cpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluids\OOP\EulerFluidSystem.cpp">
+      <Filter>Fichiers sources\Fluids\OOP</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
