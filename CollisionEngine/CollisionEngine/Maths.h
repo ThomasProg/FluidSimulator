@@ -96,6 +96,11 @@ struct Vec2
 		return Vec2(x * factor, y * factor);
 	}
 
+	Vec2 operator*(Vec2 rhs) const
+	{
+		return Vec2(x * rhs.x, y * rhs.y);
+	}
+
 	Vec2& operator*=(float factor)
 	{
 		*this = Vec2(x * factor, y * factor);
@@ -105,6 +110,11 @@ struct Vec2
 	Vec2 operator/(float factor) const
 	{
 		return Vec2(x / factor, y / factor);
+	}
+
+	Vec2 operator/(Vec2 rhs) const
+	{
+		return Vec2(x / rhs.x, y / rhs.y);
 	}
 
 	Vec2& operator/=(float factor)
@@ -162,6 +172,8 @@ struct Vec2
 		return Vec2(-y, x);
 	}
 
+	struct Vec2Int Floor() const;
+
 	float Angle(const Vec2& to)
 	{
 		float cosAngle = Clamp(Dot(Normalized(), to.Normalized()), -1.0f, 1.0f);
@@ -183,7 +195,17 @@ struct Vec2
 	{
 		return lhs.x * rhs.y - lhs.y * rhs.x;
 	}
+
+	static Vec2 Zero()
+	{
+		return { 0, 0 };
+	}
 };
+
+inline Vec2 operator/(float lhs, Vec2 rhs) 
+{
+	return Vec2(lhs / rhs.x, lhs / rhs.y);
+}
 
 inline Vec2 GetNormalBetween2Points(Vec2 p1, Vec2 p2)
 {
@@ -283,7 +305,47 @@ struct Vec2Int
 	{
 		return x * y;
 	}
+
+	Vec2Int operator-(const Vec2Int& rhs) const
+	{
+		return (*this) + (-rhs);
+	}
+
+	Vec2Int operator+(const Vec2Int& rhs) const
+	{
+		return Vec2Int{ x + rhs.x, y + rhs.y };
+	}
+
+	Vec2Int operator-() const
+	{
+		return Vec2Int{ - x, - y };
+	}
+
+	int Sum() const
+	{
+		return x + y;
+	}
+
+	static Vec2Int One() 
+	{
+		return Vec2Int{1, 1};
+	}
+
+	static Vec2Int Zero()
+	{
+		return Vec2Int{ 0, 0 };
+	}
+
+	operator Vec2() const
+	{
+		return Vec2{ float(x), float(y) };
+	}
 };
+
+inline Vec2Int Vec2::Floor() const
+{
+	return Vec2Int{int(floor(x)), int(floor(y))};
+}
 
 
 struct Mat2
