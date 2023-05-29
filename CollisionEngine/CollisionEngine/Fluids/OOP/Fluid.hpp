@@ -1,0 +1,45 @@
+#ifndef _OOP_FLUID_HPP_
+#define _OOP_FLUID_HPP_
+
+#include "Maths.h"
+
+struct Fluid
+{
+	// Rendering
+	Vec3 color = Vec3(1,0,0);
+
+	// Physics Properties
+	float volumicMass = 1.f;
+	float viscosity = 0.f;
+};
+
+inline Fluid GetAir()
+{
+	Fluid fluid;
+	fluid.color = { 0.6,0.6,0.6 };
+	fluid.viscosity = 0.0f;
+	fluid.volumicMass = 1.204f; /* 20°C   kg/m^3*/
+	return fluid;
+}
+
+
+inline Fluid AddWater()
+{
+	Fluid fluid;
+	fluid.color = { 0,0.1,0.6 };
+	fluid.viscosity = 1.0f;
+	fluid.volumicMass = 1.f; /* 20°C   kg/m^3*/
+	return fluid;
+}
+
+inline Fluid AddOil()
+{
+	Fluid fluid;
+	fluid.color = { 0.4,0.4,0.0 };
+	fluid.viscosity = 1.7f;
+	fluid.volumicMass = 881; /* 20°C   kg/m^3*/
+	return fluid;
+}
+
+
+#endif
