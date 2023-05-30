@@ -73,7 +73,6 @@ void	SPHMullerFluidSystem::Update(float dt)
 
 	ComputeDensity(); // OK
 	ComputePressure();
-	ComputeSurfaceTension();
 
 
 	AddPressureForces();
@@ -119,10 +118,6 @@ void	SPHMullerFluidSystem::ComputePressure()
 	{
 		particle.pressure = stiffness * (particle.density - restDensity);// defaultFluid->volumicMass);
 	}
-}
-void	SPHMullerFluidSystem::ComputeSurfaceTension()
-{
-
 }
 
 void	SPHMullerFluidSystem::UpdateContacts()

@@ -53,7 +53,6 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void	UpdateContacts();
 		void	ComputeDensity();
 		void	ComputePressure();
-		void	ComputeSurfaceTension();
 		void	AddPressureForces();
 		void	AddViscosityForces();
 		void	AddGravityForces();
