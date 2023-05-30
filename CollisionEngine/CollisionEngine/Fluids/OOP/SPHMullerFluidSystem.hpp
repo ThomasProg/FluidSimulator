@@ -4,6 +4,7 @@
 #include "Maths.h"
 #include "Particle.hpp"
 #include "FluidSystem.hpp"
+#include "FluidMesh.h"
 
 #include <vector>
 #include <string>
@@ -12,6 +13,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
 		std::vector<Particle> particles;
+		CFluidMesh	mesh;
 
 	public:
 		void Init();
@@ -31,8 +33,8 @@ class SPHMullerFluidSystem : public IFluidSystem
 
 		void	Integrate(float deltaTime);
 
-		void	AddParticles(const Vec2& pos, const Vec2& vel);
-		void	RemoveParticles();
+		void	AddParticle(const std::weak_ptr<struct Fluid>& fluid, const Vec2& pos, const Vec2& vel);
+		void	RemoveParticle();
 };
 
 #endif

@@ -33,6 +33,13 @@ private:
 		{
 			eulerSys->Reset(Vec2{ 0,0 }, Vec2Int{ 200,200 }, Vec2{ cellSize, cellSize });
 		}
+
+		if (SPHMullerFluidSystem* eulerSys = dynamic_cast<SPHMullerFluidSystem*>(system))
+		{
+			// TODO: Init
+
+			//eulerSys->Reset(Vec2{ 0,0 }, Vec2Int{ 200,200 }, Vec2{ cellSize, cellSize });
+		}
 	}
 
 	virtual void Update(float frameTime) override
