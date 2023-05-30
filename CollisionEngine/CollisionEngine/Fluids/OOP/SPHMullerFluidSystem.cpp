@@ -5,7 +5,7 @@ void	AddParticles(const Vec2& pos, const Vec2& vel)
 	Particle particle;
 	particle.position = pos;
 	particle.velocity = vel;
-	particle.
+	//particle.
 
 }
 

@@ -53,9 +53,9 @@ struct Vec2
 
 	float x, y;
 
-	Vec2() : x(0.0f), y(0.0f){}
+	constexpr Vec2() : x(0.0f), y(0.0f){}
 
-	Vec2(float _x, float _y) : x(_x), y(_y){}
+	constexpr Vec2(float _x, float _y) : x(_x), y(_y){}
 
 	bool operator==(const Vec2& rhs) const
 	{
@@ -196,9 +196,14 @@ struct Vec2
 		return lhs.x * rhs.y - lhs.y * rhs.x;
 	}
 
-	static Vec2 Zero()
+	static constexpr Vec2 Zero()
 	{
 		return { 0, 0 };
+	}
+
+	static constexpr Vec2 One()
+	{
+		return Vec2{ 1, 1 };
 	}
 };
 
@@ -324,6 +329,11 @@ struct Vec2Int
 	int Sum() const
 	{
 		return x + y;
+	}
+
+	int Product() const
+	{
+		return x * y;
 	}
 
 	static Vec2Int One() 

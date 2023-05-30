@@ -6,7 +6,7 @@
 class CFluidMesh
 {
 public:
-
+	float pointSize = 4.f;
 
 	template<class TFunctor>
 	void Fill(size_t count, TFunctor functor)
@@ -40,7 +40,7 @@ public:
 		glPushMatrix();
 		glTranslatef(0.0f, 0.0f, -1.0f);
 
-		glPointSize(4.0f);
+		glPointSize(pointSize);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferId);
 

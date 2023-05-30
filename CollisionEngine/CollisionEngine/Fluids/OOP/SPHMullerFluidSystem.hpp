@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-class SPHMullerFluidSystem : public FluidSystem
+class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
 		std::vector<Particle> particles;

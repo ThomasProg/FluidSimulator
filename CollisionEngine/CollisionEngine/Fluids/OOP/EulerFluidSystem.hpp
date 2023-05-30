@@ -22,6 +22,8 @@ class EulerFluidSystem : public IFluidSystem
 	struct Cell
 	{
 		std::weak_ptr<Fluid> fluid;
+		float pressure;
+		Vec velocity;
 	};
 
 public:
@@ -29,22 +31,54 @@ public:
 
 	std::vector<Cell> cells;
 	VecInt cellsCount;
-	Vec cellSize;
+	Vec cellSize = Vec::One();
 
-	std::vector<Vertex> vertices;
-	VecInt verticesCount;
+	std::vector<Vertex> rightEdges;
+	VecInt rightEdgesCount;
+	std::vector<Vertex> upEdges;
+	VecInt upEdgesCount;
+	//std::vector<Vertex> vertices;
+	//VecInt verticesCount;
 
 	std::shared_ptr<Fluid> defaultFluid = std::make_shared<Fluid>(GetAir());
+	std::shared_ptr<Fluid> errorFluid = std::make_shared<Fluid>(GetWater());
 
-	void Reset(Vec newWorldPosition, VecInt newCellsCount)
+	void ResetPressure();
+	
+	void Reset(Vec newWorldPosition, VecInt newCellsCount, Vec newCellSize)
 	{
 		worldPosition = newWorldPosition;
 
 		cellsCount = newCellsCount;
-		verticesCount = newCellsCount - VecInt::One();
+		//verticesCount = newCellsCount - VecInt::One();
+		rightEdgesCount = newCellsCount;
+		rightEdgesCount.x--;
 
-		cells.resize(cellsCount.Sum());
-		vertices.resize(verticesCount.Sum());
+		upEdgesCount = newCellsCount;
+		upEdgesCount.y--;
+
+		cells.resize(cellsCount.Product());
+		rightEdges.resize(rightEdgesCount.Product());
+		upEdges.resize(upEdgesCount.Product());
+
+		//for (Vertex& vertex : vertices)
+		//{
+		//	vertex.fluid = defaultFluid;
+		//}
+
+		ResetCells(cells);
+
+		cellSize = newCellSize;
+
+		m_mesh.pointSize = newCellSize.x * 50;
+	}
+
+	void ResetCells(std::vector<Cell>& inCells)
+	{
+		for (Cell& cell : inCells)
+		{
+			cell.fluid = defaultFluid;
+		}
 	}
 
 	virtual void AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec fluidWorldPosition, Vec Velocity, float radius) override
@@ -54,40 +88,54 @@ public:
 		VecInt indices =  (relativePos / cellSize).Floor();
 		Vec2Int offset = (radius / cellSize).Floor();
 
-		for (int y = Max(0,indices.y - offset.y); y < Min(verticesCount.x, indices.y + offset.y); y++)
+		for (int y = Max(0,indices.y - offset.y); y < Min(cellsCount.y, indices.y + offset.y); y++)
 		{
-			for (int x = Max(0, indices.x - offset.x); x < Min(verticesCount.y, indices.x + offset.x); x++)
+			for (int x = Max(0, indices.x - offset.x); x < Min(cellsCount.x, indices.x + offset.x); x++)
 			{
-				int vertexIndex = x + y * verticesCount.x;
-				vertices[vertexIndex].velocity = Velocity;
-				vertices[vertexIndex].fluid = fluid;
+				//if (x >= 0 && x < verticesCount.x && y >= 0 && y < verticesCount.y) // Check Radius
+				{
+					int vertexIndex = x + y * (cellsCount.x);
+					cells[vertexIndex].fluid = fluid;
+					//cells[vertexIndex].velocity = Velocity;
+					//rightEdges[x + y * rightEdgesCount.x].velocity = Velocity;
+				}
 			}
 		}
 	}
+
+	void Projection(float deltaTime);
+
+	void Advection(float deltaTime);
 
 	virtual void RemoveFluidAt(Vec2 fluidWorldPosition, float radius) override
 	{
 		AddFluidAt(defaultFluid, fluidWorldPosition, Vec::Zero(), radius);
 	}
 
-	virtual void Update(float deltaTime) override
+	void ApplyForces(float deltaTime);
+	virtual void Update(float deltaTime) override;
+
+	static VecInt GetCoordsFromIndex(int index, VecInt count) 
 	{
-
-
-		Draw();
+		Vec2Int Coords;
+		Coords.y = index / count.x;
+		Coords.x = index - Coords.y * count.x;
+		return Coords;
 	}
 
 	VecInt GetCellCoordsFromIndex(int index) const
 	{
-		Vec2Int Coords;
-		Coords.y = index / cellsCount.x;
-		Coords.x = index - Coords.y * cellsCount.x;
-		return Coords;
+		return GetCoordsFromIndex(index, cellsCount);
 	}
 
 	Vec GetWorldPosFromCoords(VecInt coords) const
 	{
 		return (Vec2(coords) * cellSize) + worldPosition;
+	}
+
+	VecInt GetCellCoordsFromWorldPos(Vec cellWorldPos) const
+	{
+		return ((cellWorldPos - worldPosition) / cellSize).Floor();
 	}
 
 	CFluidMesh	m_mesh;
@@ -108,6 +156,21 @@ public:
 				b = fluid->color.z;
 			}
 		});
+
+		//m_mesh.Fill(vertices.size(), [&](size_t iVertex, float& x, float& y, float& r, float& g, float& b)
+		//{
+		//	const Vertex& vertex = vertices[iVertex];
+
+		//	Vec2 pos = GetWorldPosFromCoords(GetCoordsFromIndex(iVertex, verticesCount));
+		//	x = pos.x;
+		//	y = pos.y;
+		//	if (std::shared_ptr<Fluid> fluid = vertex.fluid.lock())
+		//	{
+		//		r = fluid->color.x;
+		//		g = fluid->color.y;
+		//		b = fluid->color.z;
+		//	}
+		//});
 
 		m_mesh.Draw();
 	}

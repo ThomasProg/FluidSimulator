@@ -16,14 +16,14 @@ struct Fluid
 inline Fluid GetAir()
 {
 	Fluid fluid;
-	fluid.color = { 0.6,0.6,0.6 };
+	fluid.color = { 0.9,0.9,0.9 };
 	fluid.viscosity = 0.0f;
 	fluid.volumicMass = 1.204f; /* 20°C   kg/m^3*/
 	return fluid;
 }
 
 
-inline Fluid AddWater()
+inline Fluid GetWater()
 {
 	Fluid fluid;
 	fluid.color = { 0,0.1,0.6 };
@@ -32,7 +32,16 @@ inline Fluid AddWater()
 	return fluid;
 }
 
-inline Fluid AddOil()
+inline Fluid GetLava()
+{
+	Fluid fluid;
+	fluid.color = { 1,0.0,0.0 };
+	fluid.viscosity = 5.0f;
+	fluid.volumicMass = 1.f; /* 20°C   kg/m^3*/
+	return fluid;
+}
+
+inline Fluid GetOil()
 {
 	Fluid fluid;
 	fluid.color = { 0.4,0.4,0.0 };

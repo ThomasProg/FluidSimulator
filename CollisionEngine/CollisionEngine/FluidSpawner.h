@@ -2,54 +2,54 @@
 #define _FLUID_SPAWNER_H_
 
 #include "Behavior.h"
-#include "FluidSystem.h"
+//#include "FluidSystem.h"
 #include "GlobalVariables.h"
 #include "Renderer.h"
 #include "RenderWindow.h"
 #include "World.h"
-#include "Fluids/SPHMullerSystem.h"
+//#include "Fluids/SPHMullerSystem.h"
+//#include "Fluids/EulerSystem.h"
+#include "Fluids/OOP/EulerFluidSystem.hpp"
 
 class CFluidSpawner: public CBehavior
 {
 private:
-	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerSystem>();
+	//std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerSystem>();
+	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<EulerFluidSystem>();
+	std::shared_ptr<Fluid> water = std::make_unique<Fluid>(GetLava());
 
-	FluidSignature water;
-	FluidSignature oil;
-
-	FluidSignature* currentlyModifiedFluid = &water;
-
-	float mouseRadius = 0.2;
+	float cellSize = 0.01f;
+	float mouseRadius = cellSize * 3;
 
 	virtual void Start() override
 	{
-		water = NFluid::AddWater(*fluidSystem);
-		oil = NFluid::AddOil(*fluidSystem);
+		InitSystem(fluidSystem.get());
+	}
+
+	void InitSystem(IFluidSystem* system)
+	{
+		if (EulerFluidSystem* eulerSys = dynamic_cast<EulerFluidSystem*>(system))
+		{
+			eulerSys->Reset(Vec2{ 0,0 }, Vec2Int{ 200,200 }, Vec2{ cellSize, cellSize });
+		}
 	}
 
 	virtual void Update(float frameTime) override
 	{
 		bool clicking = gVars->pRenderWindow->GetMouseButton(0);
 		Vec2 mousePos = gVars->pRenderer->ScreenToWorldPos(gVars->pRenderWindow->GetMousePos());
-		SPHMullerSystem::Fluid fluid = fluidSystem->FindOrAddFluid(*currentlyModifiedFluid);
 
 		if (!m_clicking && clicking)
 		{
-			fluid.AddAt(mousePos, Vec2(0,0.5), 10, mouseRadius);
-
-			//CFluidSystem::Get().Spawn(mousePos - Vec2(0.5f, 0.5f), mousePos + Vec2(0.5f, 0.5f), 10.0f, Vec2(15.0f, 15.0f));
+			fluidSystem->AddFluidAt(water, mousePos, Vec2::Zero(), mouseRadius);
 		}
 		if (gVars->pRenderWindow->GetMouseButton(2))
 		{
-			SPHMullerSystem::Fluid fluid = fluidSystem->FindOrAddFluid(water);
-			fluid.RemoveAt(mousePos, mouseRadius);
-
-			//CFluidSystem::Get().Clear();
+			fluidSystem->RemoveFluidAt(mousePos, mouseRadius);
 		}
 
 		m_clicking = clicking;
 
-		//CFluidSystem::Get().Update(frameTime);
 		fluidSystem->Update(frameTime);
 	}
 

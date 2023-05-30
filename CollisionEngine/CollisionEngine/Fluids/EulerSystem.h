@@ -136,9 +136,29 @@ public:
 	virtual void Update(float deltaTime) override 
 	{
 		ForEachCell([this, deltaTime](Cell& cell)
-			{
-				IntegrateGravity(cell, deltaTime);
-			});
+		{
+			IntegrateGravity(cell, deltaTime);
+		});
+
+		//Vec2Int divergenceSize = nbCellsPerAxis - Vec2Int(1,1);
+		//int y = 0;
+		//std::vector<float> divergence((nbCellsPerAxis.x - 1) * nbCellsPerAxis.x.y
+		//for (int x = 0; x < nbCellsPerAxis.x - 1; x++)
+		//{
+		//	velocityPerCell[x + 1] - velocityPerCell[x] + velocityPerCell[y + 1] - velocityPerCell[y];
+		//}
+
+		//float divergence = 0.f;
+		//ForEachCell([&divergence](Cell& cell)
+		//{
+		//	IntegrateGravity(cell, deltaTime);
+		//});
+
+		//std::vector<FluidSignature> Fluids;
+		//ForEachCell([this, deltaTime](Cell& cell)
+		//{
+		//	cell.GetPositionRef() += cell.GetVelocityRef();
+		//});
 
 		Draw();
 	}
