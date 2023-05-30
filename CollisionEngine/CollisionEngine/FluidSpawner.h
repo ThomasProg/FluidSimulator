@@ -10,12 +10,13 @@
 //#include "Fluids/SPHMullerSystem.h"
 //#include "Fluids/EulerSystem.h"
 #include "Fluids/OOP/EulerFluidSystem.hpp"
+#include "Fluids/OOP/SPHMullerFluidSystem.hpp"
 
 class CFluidSpawner: public CBehavior
 {
 private:
 	//std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerSystem>();
-	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<EulerFluidSystem>();
+	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerFluidSystem>();
 	std::shared_ptr<Fluid> water = std::make_unique<Fluid>(GetLava());
 
 	float cellSize = 0.01f;
