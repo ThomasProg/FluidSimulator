@@ -69,8 +69,7 @@ void	SPHMullerFluidSystem::ComputeDensity()
 		const Vec2& aPos = contacts[i].p1.position;
 		const Vec2& bPos = contacts[i].p2.position;
 
-		float length = (contacts[i].p1.radius + contacts[i].p2.radius) - (contacts[i].p1.position - contacts[i].p2.position).GetLength();
-		float weight = KernelDefault(length, radius);
+		float weight = KernelDefault(contacts[i].GetContactLength(), radius);
 		contacts[i].p1.density += weight;
 		contacts[i].p2.density += weight;
 	}
@@ -230,4 +229,12 @@ float SPHMullerFluidSystem::KernelDefault(float r, float h)
 	float h4 = Sqr(h2);
 	float kernel = h2 - Sqr(r);
 	return (kernel * kernel * kernel) * (4.0f / (((float)M_PI) * Sqr(h4)));
+}
+
+float SPHMullerFluidSystem::KernelSpikyGradientFactor(float r, float h)
+{
+	float h2 = Sqr(h);
+	float h5 = Sqr(h2) * h;
+	float kernel = h - r;
+	return Sqr(kernel) * (-15.0f / ((float)M_PI * h5 * r));
 }

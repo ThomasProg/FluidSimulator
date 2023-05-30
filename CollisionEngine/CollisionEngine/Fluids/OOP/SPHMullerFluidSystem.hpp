@@ -13,6 +13,11 @@ struct Contact
 {
 	Particle& p1;
 	Particle& p2;
+
+	float GetContactLength() const
+	{
+		return (p1.radius + p2.radius) - (p1.position - p2.position).GetLength();
+	}
 };
 
 class SPHMullerFluidSystem : public IFluidSystem
@@ -54,6 +59,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void	RemoveParticle();
 
 		float	KernelDefault(float r, float h);
+		float	KernelSpikyGradientFactor(float r, float h);
 };
 
 #endif
