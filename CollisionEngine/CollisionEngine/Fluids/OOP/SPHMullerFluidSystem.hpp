@@ -59,6 +59,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void	RemoveParticle();
 
 		float	KernelDefault(float r, float h);
+		float	KernelSpikyGradientFactor(float r, float h);
 };
 
 #endif

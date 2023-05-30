@@ -196,3 +196,11 @@ float SPHMullerFluidSystem::KernelDefault(float r, float h)
 	float kernel = h2 - Sqr(r);
 	return (kernel * kernel * kernel) * (4.0f / (((float)M_PI) * Sqr(h4)));
 }
+
+float SPHMullerFluidSystem::KernelSpikyGradientFactor(float r, float h)
+{
+	float h2 = Sqr(h);
+	float h5 = Sqr(h2) * h;
+	float kernel = h - r;
+	return Sqr(kernel) * (-15.0f / ((float)M_PI * h5 * r));
+}
