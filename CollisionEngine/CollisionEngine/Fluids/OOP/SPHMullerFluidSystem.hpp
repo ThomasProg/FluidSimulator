@@ -23,7 +23,8 @@ struct Contact
 class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
-		float radius = 1.0f;
+		float stiffness = 500.f;
+		float radius = 0.2f;
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
 		CFluidMesh	mesh;

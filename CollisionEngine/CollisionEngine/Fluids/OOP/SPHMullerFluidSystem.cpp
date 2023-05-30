@@ -8,9 +8,9 @@ void SPHMullerFluidSystem::Init()
 
 void SPHMullerFluidSystem::AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 velocity, float radius)
 {
-	for (float deltaY = -radius; deltaY < radius; deltaY += radius / 2)
+	for (float deltaY = -2 * radius; deltaY < 2*radius; deltaY += radius * 4)
 	{
-		for (float deltaX = -radius; deltaX < radius; deltaX += radius / 2)
+		for (float deltaX = -2 *radius; deltaX < 2*radius; deltaX += radius * 4)
 		{
 			AddParticle(fluid, worldPosition + Vec2(deltaX, deltaY), velocity);
 		}
@@ -29,7 +29,7 @@ void	SPHMullerFluidSystem::AddParticle(const std::weak_ptr<struct Fluid>& fluid,
 	particle.velocity = vel;
 	particle.fluid = fluid;
 
-	particles.push_back(std::move(particle));
+	particles.emplace_back(std::move(particle));
 }
 
 void	SPHMullerFluidSystem::RemoveParticle()
@@ -82,7 +82,6 @@ void	SPHMullerFluidSystem::ComputeDensity()
 
 void	SPHMullerFluidSystem::ComputePressure()
 {
-	float stiffness = 500.f;
 	for (Particle& particle : particles)
 	{
 		particle.pressure = stiffness * (particle.density - defaultFluid->volumicMass);
@@ -137,9 +136,13 @@ void	SPHMullerFluidSystem::AddPressureForces()
 
 		float pressureMean = (p1.pressure + p2.pressure) / 2.f;
 
-		Vec2 acc = dist * pressureMean / (p1.density * p2.density) * KernelSpikyGradientFactor(length, radius);
+		Vec2 acc = - dist * pressureMean / (p1.density * p2.density) * KernelSpikyGradientFactor(length, radius);
 
-		p1.acceleration += acc;
+		acc += dist * 0.02f * mass * ((stiffness * (p1.density + p2.density)) / (2.0f * p1.density * p2.density)) * KernelSpikyGradientFactor(length * 0.8f, radius);
+
+		acc /= 500.f;
+
+		p1.acceleration -= acc;
 		p2.acceleration += acc;
 	}
 
@@ -153,7 +156,7 @@ void	SPHMullerFluidSystem::AddPressureForces()
 	//	float length = contact.length;
 
 	//	Vec2 pressureAcc = r * -mass * ((m_pressures[contact.a] + m_pressures[contact.b]) / (2.0f * m_densities[contact.a] * m_densities[contact.b])) * KernelSpikyGradientFactor(length, radius);
-	//	pressureAcc += r * 0.02f * mass * ((m_stiffness * (m_densities[contact.a] + m_densities[contact.b])) / (2.0f * m_densities[contact.a] * m_densities[contact.b])) * KernelSpikyGradientFactor(length * 0.8f, radius);
+	//	pressureAcc += r * 0.02f * mass * ((m_sfness * (m_densities[contact.a] + m_densities[contact.b])) / (2.0f * m_densities[contact.a] * m_densities[contact.b])) * KernelSpikyGradientFactor(length * 0.8f, radius);
 	//	m_accelerations[contact.a] += pressureAcc;
 	//	m_accelerations[contact.b] -= pressureAcc;
 	//}
