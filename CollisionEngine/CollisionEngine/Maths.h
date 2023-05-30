@@ -212,6 +212,11 @@ inline Vec2 operator/(float lhs, Vec2 rhs)
 	return Vec2(lhs / rhs.x, lhs / rhs.y);
 }
 
+inline Vec2 operator*(float lhs, Vec2 rhs)
+{
+	return Vec2(lhs * rhs.x, lhs * rhs.y);
+}
+
 inline Vec2 GetNormalBetween2Points(Vec2 p1, Vec2 p2)
 {
 	return (p1 - p2).GetNormal().Normalized();
