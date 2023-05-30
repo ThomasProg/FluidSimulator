@@ -1,5 +1,12 @@
 #include "SPHMullerFluidSystem.hpp"
 
+float SPHMullerFluidSystem::GetMass()
+{
+	float				particleRadiusRatio = 3.0f;
+	float particuleRadius = radius / particleRadiusRatio;
+	float volume = particuleRadius * particuleRadius * (float)M_PI;
+	return volume * restDensity;
+}
 
 void SPHMullerFluidSystem::Init()
 {
@@ -71,49 +78,75 @@ void	SPHMullerFluidSystem::RemoveParticle()
 
 void	SPHMullerFluidSystem::Update(float dt)
 {
-	ResetAcceleration();
-	UpdateContacts();
+	float m_timeScale = 1.f;
+	dt *= m_timeScale;
+	dt = Min(dt, 1.0f / (200.0f * m_timeScale)); // clamp d for stability, better have slow simulation than exploding simulation
 
-	ComputeDensity();
-	ComputePressure();
+
+	ResetAcceleration(); // OK
+	UpdateContacts(); // OK
+
+	ComputeDensity(); // OK
+	//ComputePressure();
 	//ComputeSurfaceTension();
 
 
-	AddPressureForces();
-	AddViscosityForces();
+	//AddPressureForces();
+	//AddViscosityForces();
 
-	AddGravityForces();
-	ApplyForces(dt);
+	//AddGravityForces();
+	ApplyForces(dt); // OK
 
-	Integrate(dt);
+	Integrate(dt); // OK
 
-	BorderCollisions();
+	BorderCollisions(); // OK
 
-	Draw();
+	Draw(); // OK
 }
 
 void	SPHMullerFluidSystem::ComputeDensity()
 {
+	//float baseWeight = KernelDefault(0.0f, radius);
+
+	//for (int j = 0; j < particles.size(); j++)
+	//{
+	//	particles[j].density = baseWeight;
+	//}
+
+	//for (int i = 0; i < contacts.size(); i++)
+	//{
+	//	const Vec2& aPos = contacts[i].p1.position;
+	//	const Vec2& bPos = contacts[i].p2.position;
+
+	//	float weight = KernelDefault(contacts[i].GetLength(), radius);
+	//	contacts[i].p1.density += weight;
+	//	contacts[i].p2.density += weight;
+	//}
+
+	//for (int j = 0; j < particles.size(); j++)
+	//{
+	//	particles[j].density *= GetMass();
+	//}
+
+	float mass = GetMass();
+
 	float baseWeight = KernelDefault(0.0f, radius);
 
-	for (int j = 0; j < particles.size(); j++)
+	for (Particle& particle : particles)
 	{
-		particles[j].density = baseWeight;
+		particle.density = baseWeight;
 	}
 
-	for (int i = 0; i < contacts.size(); i++)
+	for (Contact& contact : contacts)
 	{
-		const Vec2& aPos = contacts[i].p1.position;
-		const Vec2& bPos = contacts[i].p2.position;
-
-		float weight = KernelDefault(contacts[i].GetLength(), radius);
-		contacts[i].p1.density += weight;
-		contacts[i].p2.density += weight;
+		float weight = KernelDefault(contact.length, radius);
+		contact.p1.density += weight;
+		contact.p2.density += weight;
 	}
 
-	for (int j = 0; j < particles.size(); j++)
+	for (Particle& particle : particles)
 	{
-		particles[j].density *= particles[j].GetMass();
+		particle.density *= mass;
 	}
 }
 
@@ -139,9 +172,14 @@ void	SPHMullerFluidSystem::UpdateContacts()
 		{
 			Particle& p2 = particles[j];
 			
-			if ((p2.position - p1.position).GetSqrLength() <= Sqr(p1.radius + p2.radius))
+			if ((p1.position - p2.position).GetSqrLength() <= Sqr(radius))
 			{
-				contacts.push_back(Contact{ p1, p2 });
+				float d = (p1.position - p2.position).GetLength();
+
+				Contact contact{ p1, p2 };
+				contact.length = Clamp(d, radius * 0.1f, radius);
+
+				contacts.push_back(contact);
 			}
 		}
 	}
@@ -159,12 +197,12 @@ void	SPHMullerFluidSystem::AddPressureForces()
 {
 	for (Contact& contact : contacts)
 	{
-		auto& [p1, p2] = contact;
+		auto& [p1, p2, length] = contact;
 
 		float radius = (p1.radius + p2.radius) / 2.f;
-		float mass = (p1.GetMass() + p2.GetMass()) / 2.f;
+		float mass = GetMass();// (p1.GetMass() + p2.GetMass()) / 2.f;
 
-		float length = contact.GetLength();
+		//float length = contact.GetLength();
 
 		Vec2 dist = p1.position - p2.position;
 		//float contactLength = ;
@@ -204,14 +242,14 @@ void	SPHMullerFluidSystem::AddViscosityForces()
 {
 	for (Contact& contact : contacts)
 	{
-		float mass = contact.p1.GetMass();
+		float mass = GetMass();// contact.p1.GetMass();
 		float viscosity = 0.1f;
 
 		const Vec2& aPos = contact.p1.position;
 		const Vec2& bPos = contact.p2.position;
 
 		Vec2 deltaVel = contact.p1.velocity - contact.p2.velocity;
-		Vec2 viscosityAcc = deltaVel * -mass * (viscosity / (2.0f * contact.p1.density * contact.p2.velocity)) * KernelViscosityLaplacian2(contact.GetLength(), radius);
+		Vec2 viscosityAcc = deltaVel * -mass * (viscosity / (2.0f * contact.p1.density * contact.p2.density)) * KernelViscosityLaplacian2(contact.GetLength(), radius);
 
 		contact.p1.velocity += viscosityAcc;
 		contact.p2.velocity -= viscosityAcc;
@@ -220,7 +258,7 @@ void	SPHMullerFluidSystem::AddViscosityForces()
 
 void	SPHMullerFluidSystem::AddGravityForces()
 {
-	Vec2 gravity = { 0.f, -3.81f };
+	Vec2 gravity = { 0.f, -5.f };
 
 	for (Particle& particle : particles)
 	{
@@ -230,18 +268,33 @@ void	SPHMullerFluidSystem::AddGravityForces()
 
 void	SPHMullerFluidSystem::ApplyForces(float deltaTime)
 {
+	float				m_maxAcceleration = 900.0f;
+	Vec2 gravity(0.0f, -5);// -9.8f);
+
 	for (Particle& particle : particles)
 	{
-		particle.velocity += particle.acceleration * deltaTime;
+		if (particle.acceleration.GetSqrLength() > Sqr(m_maxAcceleration))
+		{
+			particle.acceleration *= m_maxAcceleration / particle.acceleration.GetLength();
+		}
+
+		particle.velocity += (particle.acceleration + gravity) * deltaTime;
 	}
 }
 
 void	SPHMullerFluidSystem::Integrate(float deltaTime)
 {
+	float				m_maxSpeed = 10.0f;
+
 	for (Particle& particle : particles)
 	{
 		//particle.velocity.x = Min(particle.velocity.x, 10.f);
 		//particle.velocity.y = Min(particle.velocity.y, 10.f);
+		if (particle.velocity.GetSqrLength() > Sqr(m_maxSpeed))
+		{
+			particle.velocity *= m_maxSpeed / particle.velocity.GetLength();
+		}
+
 		particle.position += particle.velocity * deltaTime;
 	}
 }
@@ -253,11 +306,13 @@ void	SPHMullerFluidSystem::BorderCollisions()
 
 	for (Particle& particle : particles)
 	{
-		if (particle.position.y < 0 && particle.velocity.y < 0)
+		if (particle.position.y <= 0 && particle.velocity.y < 0)
 		{
+			particle.position.y = 0.f;
 			particle.velocity.y *= -restitution;
 			particle.velocity.x *= friction;
-			particle.position += particle.velocity.Normalized() * (- particle.position.y); // put back behind the border
+			//particle.position += particle.velocity.Normalized() * (- particle.position.y); // put back behind the border
+
 		}
 	}
 }

@@ -13,6 +13,7 @@ struct Contact
 {
 	Particle& p1;
 	Particle& p2;
+	float length = 1.f;
 
 	float GetContactLength() const
 	{
@@ -21,7 +22,8 @@ struct Contact
 
 	float GetLength() const
 	{
-		return (p1.position - p2.position).GetLength();
+		return length;
+		//return (p1.position - p2.position).GetLength();
 	}
 };
 
@@ -29,7 +31,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
 		float stiffness = 500.f;
-		float radius = 0.2f;
+		float radius = 0.1f;
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
 		CFluidMesh	mesh;
@@ -37,6 +39,8 @@ class SPHMullerFluidSystem : public IFluidSystem
 	public:
 		std::shared_ptr<Fluid> defaultFluid = std::make_shared<Fluid>(GetAir());
 		float restDensity = 0.59f;
+
+		float GetMass();
 
 	public:
 		void Init();

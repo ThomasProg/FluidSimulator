@@ -73,11 +73,11 @@ void CFluidSystem::Update(float dt)
 
 	FindContacts();
 	ComputeDensity();
-	ComputePressure();
-	ComputeSurfaceTension();
+	//ComputePressure();
+	//ComputeSurfaceTension();
 
-	AddPressureForces();
-	AddViscosityForces();
+	//AddPressureForces();
+	//AddViscosityForces();
 
 	ApplyForces(dt);
 	Integrate(dt);
@@ -185,13 +185,21 @@ void	CFluidSystem::AddContact(size_t i, size_t j, float h)
 
 void	CFluidSystem::FindContacts()
 {
-	ComputeKeys();
-	UpdateProxies();
+	//ComputeKeys();
+	//UpdateProxies();
 
 	m_contacts.clear();
-	for (size_t a = 0; a < m_proxies.size(); ++a)
+	//for (size_t a = 0; a < m_proxies.size(); ++a)
+	//{
+	//	AddProxyContacts(a);
+	//}
+
+	for (int i = 0; i < m_positions.size(); i++)
 	{
-		AddProxyContacts(a);
+		for (int j = i + 1; j < m_positions.size(); j++)
+		{
+			AddContact(i, j, m_radius);
+		}
 	}
 }
 
