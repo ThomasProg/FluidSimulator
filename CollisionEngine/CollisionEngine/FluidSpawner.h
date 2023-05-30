@@ -2,7 +2,7 @@
 #define _FLUID_SPAWNER_H_
 
 #include "Behavior.h"
-//#include "FluidSystem.h"
+#include "FluidSystem.h"
 #include "GlobalVariables.h"
 #include "Renderer.h"
 #include "RenderWindow.h"
