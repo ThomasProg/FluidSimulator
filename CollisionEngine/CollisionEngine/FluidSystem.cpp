@@ -73,11 +73,11 @@ void CFluidSystem::Update(float dt)
 
 	FindContacts();
 	ComputeDensity();
-	//ComputePressure();
-	//ComputeSurfaceTension();
+	ComputePressure();
+	ComputeSurfaceTension();
 
-	//AddPressureForces();
-	//AddViscosityForces();
+	AddPressureForces();
+	AddViscosityForces();
 
 	ApplyForces(dt);
 	Integrate(dt);

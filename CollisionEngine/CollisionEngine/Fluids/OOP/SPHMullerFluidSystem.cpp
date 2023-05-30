@@ -87,12 +87,12 @@ void	SPHMullerFluidSystem::Update(float dt)
 	UpdateContacts(); // OK
 
 	ComputeDensity(); // OK
-	//ComputePressure();
-	//ComputeSurfaceTension();
+	ComputePressure();
+	ComputeSurfaceTension();
 
 
-	//AddPressureForces();
-	//AddViscosityForces();
+	AddPressureForces();
+	AddViscosityForces();
 
 	//AddGravityForces();
 	ApplyForces(dt); // OK
@@ -245,14 +245,11 @@ void	SPHMullerFluidSystem::AddViscosityForces()
 		float mass = GetMass();// contact.p1.GetMass();
 		float viscosity = 0.1f;
 
-		const Vec2& aPos = contact.p1.position;
-		const Vec2& bPos = contact.p2.position;
-
 		Vec2 deltaVel = contact.p1.velocity - contact.p2.velocity;
 		Vec2 viscosityAcc = deltaVel * -mass * (viscosity / (2.0f * contact.p1.density * contact.p2.density)) * KernelViscosityLaplacian2(contact.GetLength(), radius);
 
-		contact.p1.velocity += viscosityAcc;
-		contact.p2.velocity -= viscosityAcc;
+		contact.p1.acceleration += viscosityAcc;
+		contact.p2.acceleration -= viscosityAcc;
 	}
 }
 
