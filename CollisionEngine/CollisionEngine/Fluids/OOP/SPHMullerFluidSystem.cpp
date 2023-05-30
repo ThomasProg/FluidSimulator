@@ -213,7 +213,7 @@ void	SPHMullerFluidSystem::AddPressureForces()
 
 		Vec2 acc = - dist * mass * pressureMean / (p1.density * p2.density) * KernelSpikyGradientFactor(length, radius);
 
-		//acc += dist * 0.02f * mass * ((stiffness * (p1.density + p2.density)) / (2.0f * p1.density * p2.density)) * KernelSpikyGradientFactor(length * 0.8f, radius);
+		acc += dist * 0.02f * mass * ((stiffness * (p1.density + p2.density)) / (2.0f * p1.density * p2.density)) * KernelSpikyGradientFactor(length * 0.8f, radius);
 
 		p1.acceleration += acc;
 		p2.acceleration -= acc;
