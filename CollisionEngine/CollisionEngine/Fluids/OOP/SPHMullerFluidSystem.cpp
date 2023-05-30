@@ -129,6 +129,7 @@ void	SPHMullerFluidSystem::UpdateContacts()
 {
 	contacts.clear();
 	contacts.reserve(Sqr(particles.size()));
+
 	for (int i = 0; i < particles.size(); i++)
 	{
 		Particle& p1 = particles[i];
@@ -164,7 +165,6 @@ void	SPHMullerFluidSystem::AddPressureForces()
 	{
 		auto& [p1, p2, length] = contact;
 
-		float radius = (p1.radius + p2.radius) / 2.f;
 		float mass = GetMass();// (p1.GetMass() + p2.GetMass()) / 2.f;
 
 		Vec2 dist = p1.position - p2.position;

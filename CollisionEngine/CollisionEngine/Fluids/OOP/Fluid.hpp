@@ -36,7 +36,7 @@ inline Fluid GetLava()
 {
 	Fluid fluid;
 	fluid.color = { 1,0.0,0.0 };
-	fluid.viscosity = 5.0f;
+	fluid.viscosity = 5.0f/10.f;
 	fluid.volumicMass = 1.f; /* 20°C   kg/m^3*/
 	return fluid;
 }

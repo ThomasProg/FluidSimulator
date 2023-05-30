@@ -15,11 +15,6 @@ struct Contact
 	Particle& p2;
 	float length = 1.f;
 
-	float GetContactLength() const
-	{
-		return (p1.radius + p2.radius) - GetLength();
-	}
-
 	float GetLength() const
 	{
 		return length;
