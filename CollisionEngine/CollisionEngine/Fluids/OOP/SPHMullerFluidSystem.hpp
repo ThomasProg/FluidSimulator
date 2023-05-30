@@ -18,6 +18,7 @@ struct Contact
 class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
+		float radius = 1.0f;
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
 		CFluidMesh	mesh;
@@ -48,6 +49,8 @@ class SPHMullerFluidSystem : public IFluidSystem
 
 		void	AddParticle(const std::weak_ptr<struct Fluid>& fluid, const Vec2& pos, const Vec2& vel);
 		void	RemoveParticle();
+
+		float	KernelDefault(float r, float h);
 };
 
 #endif

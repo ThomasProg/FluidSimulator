@@ -60,8 +60,25 @@ void	SPHMullerFluidSystem::Update(float dt)
 
 void	SPHMullerFluidSystem::ComputeDensity()
 {
+	float baseWeight = KernelDefault(0.0f, radius);
 
+	for (int i = 0; i < contacts.size(); i++)
+	{
+		const Vec2& aPos = contacts[i].p1.position;
+		const Vec2& bPos = contacts[i].p2.position;
+
+		float length = (contacts[i].p1.radius + contacts[i].p2.radius) - (contacts[i].p1.position - contacts[i].p2.position).GetLength();
+		float weight = KernelDefault(length, radius);
+		contacts[i].p1.density += weight;
+		contacts[i].p2.density += weight;
+	}
+
+	for (int j = 0; j < particles.size(); j++)
+	{
+		particles[j].density *= particles[j].GetMass();
+	}
 }
+
 void	SPHMullerFluidSystem::ComputePressure()
 {
 
@@ -164,4 +181,12 @@ void SPHMullerFluidSystem::Draw()
 	});
 
 	mesh.Draw();
+}
+
+float SPHMullerFluidSystem::KernelDefault(float r, float h)
+{
+	float h2 = Sqr(h);
+	float h4 = Sqr(h2);
+	float kernel = h2 - Sqr(r);
+	return (kernel * kernel * kernel) * (4.0f / (((float)M_PI) * Sqr(h4)));
 }
