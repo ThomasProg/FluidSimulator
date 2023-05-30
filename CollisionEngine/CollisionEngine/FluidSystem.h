@@ -76,7 +76,7 @@ private:
 	void	ClampArray(std::vector<Vec2>& array, float limit);
 	void	FillMesh();
 
-	float				m_radius = 0.2f;
+	float				m_radius = 0.1f;
 	float				m_minRadius;
 	float				m_restDensity = 0.59f;
 	float				m_stiffness = 500.0f;

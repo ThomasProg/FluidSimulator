@@ -19,8 +19,8 @@ private:
 	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerFluidSystem>();
 	std::shared_ptr<Fluid> water = std::make_unique<Fluid>(GetLava());
 
-	float cellSize = 0.01f;
-	float mouseRadius = cellSize * 3;
+	float cellSize = 0.4f;
+	float mouseRadius = 0.5;//cellSize * 3;
 
 	virtual void Start() override
 	{

@@ -16,14 +16,19 @@ struct Contact
 
 	float GetContactLength() const
 	{
-		return (p1.radius + p2.radius) - (p1.position - p2.position).GetLength();
+		return (p1.radius + p2.radius) - GetLength();
+	}
+
+	float GetLength() const
+	{
+		return (p1.position - p2.position).GetLength();
 	}
 };
 
 class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
-		float stiffness = 500.f;
+		float stiffness = 5.f;
 		float radius = 0.2f;
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;

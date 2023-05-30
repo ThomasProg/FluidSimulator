@@ -8,9 +8,9 @@ void SPHMullerFluidSystem::Init()
 
 void SPHMullerFluidSystem::AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 velocity, float radius)
 {
-	for (float deltaY = -2 * radius; deltaY < 2*radius; deltaY += radius * 4)
+	for (float deltaY = -radius; deltaY < radius; deltaY += radius / 2)
 	{
-		for (float deltaX = -2 *radius; deltaX < 2*radius; deltaX += radius * 4)
+		for (float deltaX = -radius; deltaX < radius; deltaX += radius / 2)
 		{
 			AddParticle(fluid, worldPosition + Vec2(deltaX, deltaY), velocity);
 		}
@@ -74,7 +74,7 @@ void	SPHMullerFluidSystem::ComputeDensity()
 		const Vec2& aPos = contacts[i].p1.position;
 		const Vec2& bPos = contacts[i].p2.position;
 
-		float weight = KernelDefault(contacts[i].GetContactLength(), radius);
+		float weight = KernelDefault(contacts[i].GetLength(), radius);
 		contacts[i].p1.density += weight;
 		contacts[i].p2.density += weight;
 	}
@@ -132,7 +132,7 @@ void	SPHMullerFluidSystem::AddPressureForces()
 		float radius = (p1.radius + p2.radius) / 2.f;
 		float mass = (p1.GetMass() + p2.GetMass()) / 2.f;
 
-		float length = contact.GetContactLength();
+		float length = contact.GetLength();
 
 		Vec2 dist = p1.position - p2.position;
 		//float contactLength = ;
@@ -145,10 +145,11 @@ void	SPHMullerFluidSystem::AddPressureForces()
 
 		acc += dist * 0.02f * mass * ((stiffness * (p1.density + p2.density)) / (2.0f * p1.density * p2.density)) * KernelSpikyGradientFactor(length * 0.8f, radius);
 
-		acc /= 500.f;
+		p1.acceleration += acc;
+		p2.acceleration -= acc;
 
-		p1.acceleration -= acc;
-		p2.acceleration += acc;
+		//p1.acceleration -= dist * length;
+		//p2.acceleration += dist * length;
 	}
 
 
@@ -194,6 +195,8 @@ void	SPHMullerFluidSystem::Integrate(float deltaTime)
 {
 	for (Particle& particle : particles)
 	{
+		//particle.velocity.x = Min(particle.velocity.x, 10.f);
+		//particle.velocity.y = Min(particle.velocity.y, 10.f);
 		particle.position += particle.velocity * deltaTime;
 	}
 }
