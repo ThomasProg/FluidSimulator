@@ -29,6 +29,9 @@ class SPHMullerFluidSystem : public IFluidSystem
 		CFluidMesh	mesh;
 
 	public:
+		std::shared_ptr<Fluid> defaultFluid = std::make_shared<Fluid>(GetAir());
+
+	public:
 		void Init();
 		void AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 Velocity, float radius) override;
 		void RemoveFluidAt(Vec2 worldPosition, float radius) override;

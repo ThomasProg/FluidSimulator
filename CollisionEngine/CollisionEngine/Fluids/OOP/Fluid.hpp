@@ -9,7 +9,7 @@ struct Fluid
 	Vec3 color = Vec3(1,0,0);
 
 	// Physics Properties
-	float volumicMass = 1.f;
+	float volumicMass = 1.f; /* density */
 	float viscosity = 0.f;
 };
 

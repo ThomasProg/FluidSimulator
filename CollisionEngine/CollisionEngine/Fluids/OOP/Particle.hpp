@@ -11,7 +11,8 @@
 struct Particle
 {
 	float radius = 0.2f;
-	float density;
+	float pressure = 0.f;
+	float density = 1.f; /* volumic mass */
 	Vec2 position;
 	Vec2 velocity;
 	Vec2 acceleration;
