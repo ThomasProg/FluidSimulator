@@ -1,6 +1,22 @@
 #include "SPHMullerFluidSystem.hpp"
 
-void	AddParticles(const Vec2& pos, const Vec2& vel)
+
+void SPHMullerFluidSystem::Init()
+{
+
+}
+
+void SPHMullerFluidSystem::AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 Velocity, float radius)
+{
+
+}
+
+void SPHMullerFluidSystem::RemoveFluidAt(Vec2 worldPosition, float radius)
+{
+
+}
+
+void	SPHMullerFluidSystem::AddParticles(const Vec2& pos, const Vec2& vel)
 {
 	Particle particle;
 	particle.position = pos;
@@ -9,19 +25,68 @@ void	AddParticles(const Vec2& pos, const Vec2& vel)
 
 }
 
-void	RemoveParticles()
+void	SPHMullerFluidSystem::RemoveParticles()
 {
 
 }
 
-void	Update(float dt)
+void	SPHMullerFluidSystem::Update(float dt)
+{
+	ComputeDensity();
+	ComputePressure();
+	ComputeSurfaceTension();
+
+	AddPressureForces();
+	AddViscosityForces();
+
+	ApplyForces(dt);
+
+	Integrate(dt);
+
+	BorderCollisions();
+
+	Draw();
+}
+
+void	SPHMullerFluidSystem::ComputeDensity()
+{
+
+}
+void	SPHMullerFluidSystem::ComputePressure()
+{
+
+}
+void	SPHMullerFluidSystem::ComputeSurfaceTension()
 {
 
 }
 
-void	ComputeDensity();
-void	ComputePressure();
-void	ComputeSurfaceTension();
-void	AddPressureForces();
-void	AddViscosityForces();
-void	BorderCollisions();
+void	SPHMullerFluidSystem::AddPressureForces()
+{
+
+}
+
+void	SPHMullerFluidSystem::AddViscosityForces()
+{
+
+}
+
+void	SPHMullerFluidSystem::ApplyForces(float deltaTime)
+{
+
+}
+
+void	SPHMullerFluidSystem::Integrate(float deltaTime)
+{
+
+}
+
+void	SPHMullerFluidSystem::BorderCollisions()
+{
+
+}
+
+void SPHMullerFluidSystem::Draw()
+{
+
+}

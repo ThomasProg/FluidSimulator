@@ -14,9 +14,11 @@ class SPHMullerFluidSystem : public IFluidSystem
 		std::vector<Particle> particles;
 
 	public:
+		void Init();
 		void AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 Velocity, float radius) override;
 		void RemoveFluidAt(Vec2 worldPosition, float radius) override;
 		void Update(float deltaTime) override;
+		void Draw();
 
 	private:
 		void	ComputeDensity();
@@ -25,6 +27,12 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void	AddPressureForces();
 		void	AddViscosityForces();
 		void	BorderCollisions();
+		void	ApplyForces(float deltaTime);
+
+		void	Integrate(float deltaTime);
+
+		void	AddParticles(const Vec2& pos, const Vec2& vel);
+		void	RemoveParticles();
 };
 
 #endif
