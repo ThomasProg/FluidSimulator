@@ -32,6 +32,11 @@ class SPHMullerFluidSystem : public IFluidSystem
 	private:
 		float stiffness = 500.f;
 		float radius = 0.1f;
+		float restitution = 0.4f;
+		float friction = 0.4f;
+		float maxSpeed = 10.0f;
+		float maxAcceleration = 900.0f;
+
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
 		CFluidMesh	mesh;

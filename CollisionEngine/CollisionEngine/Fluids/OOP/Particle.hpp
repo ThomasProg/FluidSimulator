@@ -10,7 +10,6 @@
 
 struct Particle
 {
-	float radius = 0.1f;
 	float pressure = 0.f;
 	float density = 1.f; /* volumic mass */
 	Vec2 position;
@@ -18,17 +17,6 @@ struct Particle
 	Vec2 acceleration;
 
 	std::weak_ptr<Fluid> fluid;
-
-	inline float GetVolume() const
-	{
-		return radius * radius * M_PI;
-	}
-
-	inline float GetMass() const
-	{
-		const std::shared_ptr<Fluid> fluidSp = fluid.lock();
-		return fluidSp->volumicMass * GetVolume();
-	}
 
 	inline float GetViscosity() const
 	{
