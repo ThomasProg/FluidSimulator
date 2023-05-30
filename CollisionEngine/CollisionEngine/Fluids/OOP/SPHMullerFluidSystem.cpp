@@ -8,11 +8,43 @@ void SPHMullerFluidSystem::Init()
 
 void SPHMullerFluidSystem::AddFluidAt(const std::weak_ptr<struct Fluid>& fluid, Vec2 worldPosition, Vec2 velocity, float radius)
 {
-	for (float deltaY = -radius; deltaY < radius; deltaY += radius / 2)
+	//for (float deltaY = -radius; deltaY < radius; deltaY += radius / 2)
+	//{
+	//	for (float deltaX = -radius; deltaX < radius; deltaX += radius / 2)
+	//	{
+	//		AddParticle(fluid, worldPosition + Vec2(deltaX, deltaY), velocity);
+	//	}
+	//}
+
+	Vec2 min = worldPosition - Vec2(0.5f, 0.5f);
+	Vec2 max = worldPosition + Vec2(0.5f, 0.5f);
+	float particulesPerMeter = 10.0f;
+	//CFluidSystem::Get().Spawn(mousePos - Vec2(0.5f, 0.5f), mousePos + Vec2(0.5f, 0.5f), 10.0f, Vec2(0.0f, 0.0f));
+
+
+	float width = max.x - min.x;
+	size_t horiCount = (size_t)(width * particulesPerMeter) + 1;
+
+	float height = max.y - min.y;
+	size_t vertiCount = (size_t)(height * particulesPerMeter) + 1;
+
+	size_t count = horiCount * vertiCount;
+
+	//m_positions.reserve(m_positions.size() + count);
+	//m_velocities.reserve(m_velocities.size() + count);
+	//m_accelerations.reserve(m_accelerations.size() + count);
+	//m_densities.reserve(m_densities.size() + count);
+	//m_pressures.reserve(m_pressures.size() + count);
+
+	for (size_t i = 0; i < horiCount; ++i)
 	{
-		for (float deltaX = -radius; deltaX < radius; deltaX += radius / 2)
+		for (size_t j = 0; j < vertiCount; ++j)
 		{
-			AddParticle(fluid, worldPosition + Vec2(deltaX, deltaY), velocity);
+			float x = min.x + ((float)i) / particulesPerMeter;
+			float y = min.y + ((float)j) / particulesPerMeter;
+
+			//SpawnParticule(Vec2(x, y), speed);
+			AddParticle(fluid, Vec2(x, y), velocity);
 		}
 	}
 }

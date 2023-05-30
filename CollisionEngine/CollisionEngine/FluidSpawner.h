@@ -49,7 +49,8 @@ private:
 
 		if (!m_clicking && clicking)
 		{
-			fluidSystem->AddFluidAt(water, mousePos, Vec2::Zero(), mouseRadius);
+			fluidSystem->AddFluidAt(water, mousePos + Vec2(2,0), Vec2::Zero(), mouseRadius);
+			//CFluidSystem::Get().Spawn(mousePos - Vec2(0.5f, 0.5f), mousePos + Vec2(0.5f, 0.5f), 10.0f, Vec2(0.0f, 0.0f));
 		}
 		if (gVars->pRenderWindow->GetMouseButton(2))
 		{
@@ -59,6 +60,7 @@ private:
 		m_clicking = clicking;
 
 		fluidSystem->Update(frameTime);
+		CFluidSystem::Get().Update(frameTime);
 	}
 
 	bool m_clicking = false;
