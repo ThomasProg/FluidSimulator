@@ -11,6 +11,7 @@
 struct Particle
 {
 	float radius = 0.2f;
+	float pressure = 0.f;
 	Vec2 position;
 	Vec2 velocity;
 	Vec2 acceleration;

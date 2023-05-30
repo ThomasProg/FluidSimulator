@@ -66,14 +66,10 @@ void	SPHMullerFluidSystem::ComputeDensity()
 }
 void	SPHMullerFluidSystem::ComputePressure()
 {
+	float stiffness = 500.f;
 	for (Particle& particle : particles)
 	{
-
-	}
-
-	for (size_t i = 0; i < m_pressures.size(); ++i)
-	{
-		m_pressures[i] = m_stiffness * (m_densities[i] - m_restDensity);
+		particle.pressure = stiffness * (particle.density /* volumic mass */ - defaultFluid->volumicMass);
 	}
 }
 void	SPHMullerFluidSystem::ComputeSurfaceTension()
