@@ -39,14 +39,16 @@ void	SPHMullerFluidSystem::RemoveParticle()
 
 void	SPHMullerFluidSystem::Update(float dt)
 {
+	ResetAcceleration();
+	UpdateContacts();
+
 	ComputeDensity();
 	ComputePressure();
-	ComputeSurfaceTension();
+	//ComputeSurfaceTension();
 
-	ResetAcceleration();
 
 	AddPressureForces();
-	AddViscosityForces();
+	//AddViscosityForces();
 
 	AddGravityForces();
 	ApplyForces(dt);
@@ -64,7 +66,15 @@ void	SPHMullerFluidSystem::ComputeDensity()
 }
 void	SPHMullerFluidSystem::ComputePressure()
 {
+	for (Particle& particle : particles)
+	{
 
+	}
+
+	for (size_t i = 0; i < m_pressures.size(); ++i)
+	{
+		m_pressures[i] = m_stiffness * (m_densities[i] - m_restDensity);
+	}
 }
 void	SPHMullerFluidSystem::ComputeSurfaceTension()
 {
@@ -73,6 +83,7 @@ void	SPHMullerFluidSystem::ComputeSurfaceTension()
 
 void	SPHMullerFluidSystem::UpdateContacts()
 {
+	contacts.clear();
 	for (int i = 0; i < particles.size(); i++)
 	{
 		Particle& p1 = particles[i];
