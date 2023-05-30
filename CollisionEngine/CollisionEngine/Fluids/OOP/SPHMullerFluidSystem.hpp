@@ -9,9 +9,16 @@
 #include <vector>
 #include <string>
 
+struct Contact
+{
+	Particle& p1;
+	Particle& p2;
+};
+
 class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
+		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
 		CFluidMesh	mesh;
 
@@ -23,6 +30,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void Draw();
 
 	private:
+		void	UpdateContacts();
 		void	ComputeDensity();
 		void	ComputePressure();
 		void	ComputeSurfaceTension();

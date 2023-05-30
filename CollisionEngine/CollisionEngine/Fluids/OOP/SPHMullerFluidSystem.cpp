@@ -71,6 +71,23 @@ void	SPHMullerFluidSystem::ComputeSurfaceTension()
 
 }
 
+void	SPHMullerFluidSystem::UpdateContacts()
+{
+	for (int i = 0; i < particles.size(); i++)
+	{
+		Particle& p1 = particles[i];
+		for (int j = i + 1; j < particles.size(); j++)
+		{
+			Particle& p2 = particles[j];
+			
+			if ((p2.position - p1.position).GetSqrLength() <= Sqr(p1.radius + p2.radius))
+			{
+				contacts.push_back(Contact{ p1, p2 });
+			}
+		}
+	}
+}
+
 void	SPHMullerFluidSystem::ResetAcceleration()
 {
 	for (Particle& particle : particles)

@@ -293,6 +293,12 @@ struct Vec3
 	}
 };
 
+template<typename T>
+T Sqr(const T& v)
+{
+	return v * v;
+}
+
 inline bool IsNearlyEqual(Vec3 lhs, Vec3 rhs, float precision = 0.00001)
 {
 	return IsNearlyEqual(lhs.x, rhs.x) && IsNearlyEqual(lhs.y, rhs.y) && IsNearlyEqual(lhs.z, rhs.z);
