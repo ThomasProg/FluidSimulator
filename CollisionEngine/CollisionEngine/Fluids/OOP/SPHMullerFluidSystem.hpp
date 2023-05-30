@@ -67,6 +67,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 
 		float	KernelDefault(float r, float h);
 		float	KernelSpikyGradientFactor(float r, float h);
+		float	KernelViscosityLaplacian2(float r, float h);
 };
 
 #endif

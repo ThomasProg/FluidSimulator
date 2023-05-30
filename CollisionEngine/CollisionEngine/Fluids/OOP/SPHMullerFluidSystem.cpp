@@ -48,7 +48,7 @@ void	SPHMullerFluidSystem::Update(float dt)
 
 
 	AddPressureForces();
-	//AddViscosityForces();
+	AddViscosityForces();
 
 	AddGravityForces();
 	ApplyForces(dt);
@@ -170,7 +170,20 @@ void	SPHMullerFluidSystem::AddPressureForces()
 
 void	SPHMullerFluidSystem::AddViscosityForces()
 {
+	for (Contact& contact : contacts)
+	{
+		float mass = contact.p1.GetMass();
+		float viscosity = 0.1f;
 
+		const Vec2& aPos = contact.p1.position;
+		const Vec2& bPos = contact.p2.position;
+
+		Vec2 deltaVel = contact.p1.velocity - contact.p2.velocity;
+		Vec2 viscosityAcc = deltaVel * -mass * (viscosity / (2.0f * contact.p1.density * contact.p2.velocity)) * KernelViscosityLaplacian2(contact.GetLength(), radius);
+
+		contact.p1.velocity += viscosityAcc;
+		contact.p2.velocity -= viscosityAcc;
+	}
 }
 
 void	SPHMullerFluidSystem::AddGravityForces()
@@ -249,4 +262,11 @@ float SPHMullerFluidSystem::KernelSpikyGradientFactor(float r, float h)
 	float h5 = Sqr(h2) * h;
 	float kernel = h - r;
 	return Sqr(kernel) * (-15.0f / ((float)M_PI * h5 * r));
+}
+
+float SPHMullerFluidSystem::KernelViscosityLaplacian2(float r, float h)
+{
+	float h2 = h * h;
+	float kernel = h - r;
+	return kernel * (30.0f / ((float)M_PI * h2 * h2 * h));
 }
