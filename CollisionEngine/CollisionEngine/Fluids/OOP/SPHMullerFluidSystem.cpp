@@ -43,9 +43,12 @@ void	SPHMullerFluidSystem::Update(float dt)
 	ComputePressure();
 	ComputeSurfaceTension();
 
+	ResetAcceleration();
+
 	AddPressureForces();
 	AddViscosityForces();
 
+	AddGravityForces();
 	ApplyForces(dt);
 
 	Integrate(dt);
@@ -68,6 +71,14 @@ void	SPHMullerFluidSystem::ComputeSurfaceTension()
 
 }
 
+void	SPHMullerFluidSystem::ResetAcceleration()
+{
+	for (Particle& particle : particles)
+	{
+		particle.acceleration = Vec2(0,0);
+	}
+}
+
 void	SPHMullerFluidSystem::AddPressureForces()
 {
 
@@ -78,14 +89,30 @@ void	SPHMullerFluidSystem::AddViscosityForces()
 
 }
 
+void	SPHMullerFluidSystem::AddGravityForces()
+{
+	Vec2 gravity = { 0.f, -3.81f };
+
+	for (Particle& particle : particles)
+	{
+		particle.acceleration += gravity;
+	}
+}
+
 void	SPHMullerFluidSystem::ApplyForces(float deltaTime)
 {
-
+	for (Particle& particle : particles)
+	{
+		particle.velocity += particle.acceleration * deltaTime;
+	}
 }
 
 void	SPHMullerFluidSystem::Integrate(float deltaTime)
 {
-
+	for (Particle& particle : particles)
+	{
+		particle.position += particle.velocity * deltaTime;
+	}
 }
 
 void	SPHMullerFluidSystem::BorderCollisions()

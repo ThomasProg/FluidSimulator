@@ -13,6 +13,7 @@ struct Particle
 	float radius = 0.2f;
 	Vec2 position;
 	Vec2 velocity;
+	Vec2 acceleration;
 
 	std::weak_ptr<Fluid> fluid;
 

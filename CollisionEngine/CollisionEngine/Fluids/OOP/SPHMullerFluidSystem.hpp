@@ -28,9 +28,14 @@ class SPHMullerFluidSystem : public IFluidSystem
 		void	ComputeSurfaceTension();
 		void	AddPressureForces();
 		void	AddViscosityForces();
+		void	AddGravityForces();
 		void	BorderCollisions();
+		void	ResetAcceleration();
+
+		// Update Velocity
 		void	ApplyForces(float deltaTime);
 
+		// Update Position
 		void	Integrate(float deltaTime);
 
 		void	AddParticle(const std::weak_ptr<struct Fluid>& fluid, const Vec2& pos, const Vec2& vel);
