@@ -28,7 +28,7 @@ struct Contact
 class SPHMullerFluidSystem : public IFluidSystem
 {
 	private:
-		float stiffness = 5.f;
+		float stiffness = 500.f;
 		float radius = 0.2f;
 		std::vector<Contact> contacts;
 		std::vector<Particle> particles;
@@ -36,6 +36,7 @@ class SPHMullerFluidSystem : public IFluidSystem
 
 	public:
 		std::shared_ptr<Fluid> defaultFluid = std::make_shared<Fluid>(GetAir());
+		float restDensity = 0.59f;
 
 	public:
 		void Init();

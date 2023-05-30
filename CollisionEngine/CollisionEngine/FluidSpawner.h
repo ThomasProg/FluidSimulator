@@ -63,6 +63,30 @@ private:
 
 	bool m_clicking = false;
 };
+//
+//class CFluidSpawner : public CBehavior
+//{
+//private:
+//	virtual void Update(float frameTime) override
+//	{
+//		bool clicking = gVars->pRenderWindow->GetMouseButton(0);
+//		if (!m_clicking && clicking)
+//		{
+//			Vec2 mousePoint = gVars->pRenderer->ScreenToWorldPos(gVars->pRenderWindow->GetMousePos());
+//			CFluidSystem::Get().Spawn(mousePoint - Vec2(0.5f, 0.5f), mousePoint + Vec2(0.5f, 0.5f), 10.0f, Vec2(15.0f, 15.0f));
+//		}
+//		if (gVars->pRenderWindow->GetMouseButton(1))
+//		{
+//			//CFluidSystem::Get().Clear();
+//		}
+//
+//		m_clicking = clicking;
+//
+//		CFluidSystem::Get().Update(frameTime);
+//	}
+//
+//	bool m_clicking = false;
+//};
 
 
 #endif
