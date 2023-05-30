@@ -64,6 +64,11 @@ void	SPHMullerFluidSystem::ComputeDensity()
 {
 	float baseWeight = KernelDefault(0.0f, radius);
 
+	for (int j = 0; j < particles.size(); j++)
+	{
+		particles[j].density = baseWeight;
+	}
+
 	for (int i = 0; i < contacts.size(); i++)
 	{
 		const Vec2& aPos = contacts[i].p1.position;
