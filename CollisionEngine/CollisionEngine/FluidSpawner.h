@@ -17,10 +17,13 @@ class CFluidSpawner: public CBehavior
 private:
 	//std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerSystem>();
 	std::unique_ptr<IFluidSystem> fluidSystem = std::make_unique<SPHMullerFluidSystem>();
-	std::shared_ptr<Fluid> water = std::make_unique<Fluid>(GetLava());
+	std::shared_ptr<Fluid> water = std::make_unique<Fluid>(GetWater());
+	std::shared_ptr<Fluid> lava = std::make_unique<Fluid>(GetOil());
 
 	float cellSize = 0.4f;
 	float mouseRadius = 0.5;//cellSize * 3;
+
+	int id = 0;
 
 	virtual void Start() override
 	{
@@ -49,8 +52,20 @@ private:
 
 		if (!m_clicking && clicking)
 		{
-			fluidSystem->AddFluidAt(water, mousePos + Vec2(5,0), Vec2::Zero(), mouseRadius);
-			CFluidSystem::Get().Spawn(mousePos - Vec2(0.5f, 0.5f), mousePos + Vec2(0.5f, 0.5f), 10.0f, Vec2(0.0f, 0.0f));
+			switch (id)
+			{
+			case 0:
+				fluidSystem->AddFluidAt(water, mousePos + Vec2(0.0, 0), Vec2::Zero(), mouseRadius);
+				break;
+				//CFluidSystem::Get().Spawn(mousePos - Vec2(0.5f, 0.5f), mousePos + Vec2(0.5f, 0.5f), 10.0f, Vec2(0.0f, 0.0f));
+			case 1:
+				fluidSystem->AddFluidAt(lava, mousePos + Vec2(0.0, 0), Vec2::Zero(), mouseRadius);
+				break;
+			}
+
+			id++;
+			if (id > 1)
+				id = 0;
 		}
 		if (gVars->pRenderWindow->GetMouseButton(2))
 		{
@@ -60,7 +75,7 @@ private:
 		m_clicking = clicking;
 
 		fluidSystem->Update(frameTime);
-		CFluidSystem::Get().Update(frameTime);
+		//CFluidSystem::Get().Update(frameTime);
 	}
 
 	bool m_clicking = false;

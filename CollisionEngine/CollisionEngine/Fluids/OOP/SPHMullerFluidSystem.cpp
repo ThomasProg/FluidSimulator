@@ -243,7 +243,8 @@ void	SPHMullerFluidSystem::AddViscosityForces()
 	for (Contact& contact : contacts)
 	{
 		float mass = GetMass();// contact.p1.GetMass();
-		float viscosity = 0.1f;
+		//float viscosity = 0.1f;
+		float viscosity = (contact.p1.fluid.lock()->viscosity + contact.p2.fluid.lock()->viscosity) / 2;
 
 		Vec2 deltaVel = contact.p1.velocity - contact.p2.velocity;
 		Vec2 viscosityAcc = deltaVel * -mass * (viscosity / (2.0f * contact.p1.density * contact.p2.density)) * KernelViscosityLaplacian2(contact.GetLength(), radius);
