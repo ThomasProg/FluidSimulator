@@ -117,7 +117,18 @@ void	SPHMullerFluidSystem::Integrate(float deltaTime)
 
 void	SPHMullerFluidSystem::BorderCollisions()
 {
+	const float restitution = 0.4f;
+	const float friction = 0.4f;
 
+	for (Particle& particle : particles)
+	{
+		if (particle.position.y < 0 && particle.velocity.y < 0)
+		{
+			particle.velocity.y *= -restitution;
+			particle.velocity.x *= friction;
+			particle.position += particle.velocity.Normalized() * (- particle.position.y); // put back behind the border
+		}
+	}
 }
 
 void SPHMullerFluidSystem::Draw()
