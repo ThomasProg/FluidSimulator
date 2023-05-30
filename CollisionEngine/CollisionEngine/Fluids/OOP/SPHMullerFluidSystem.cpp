@@ -67,8 +67,7 @@ void	SPHMullerFluidSystem::ComputeDensity()
 		const Vec2& aPos = contacts[i].p1.position;
 		const Vec2& bPos = contacts[i].p2.position;
 
-		float length = (contacts[i].p1.radius + contacts[i].p2.radius) - (contacts[i].p1.position - contacts[i].p2.position).GetLength();
-		float weight = KernelDefault(length, radius);
+		float weight = KernelDefault(contacts[i].GetContactLength(), radius);
 		contacts[i].p1.density += weight;
 		contacts[i].p2.density += weight;
 	}
